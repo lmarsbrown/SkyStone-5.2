@@ -13,7 +13,7 @@ public class Robot{
     double wheelDia = 72;
     double countsPerRev = 2400;
     double wheelCirc;
-    double pDist;
+    double encDist = 385;
     public Robot(DcMotor encLeft,DcMotor encRight,DcMotor encSide)
     {
         this.encLeft = encLeft;
@@ -21,15 +21,22 @@ public class Robot{
         this.encSide = encSide;
         wheelCirc = wheelDia * Math.PI;
         countsPerRev = 1/countsPerRev;
-        pPos.x = encSide.getCurrentPosition()*countsPerRev*wheelCirc;
-        pPos.y = 0.5*((encRight.getCurrentPosition()*countsPerRev*wheelCirc)+(encLeft.getCurrentPosition()*countsPerRev*wheelCirc));
+        Vector3 rPosToastal = getRPosTotal();
+        pPos.x = rPosToastal.r;
+        pPos.y = 0.5*(rPosToastal.x-rPosToastal.y);
+        pPos.r = ((rPosToastal.x+rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2);
     }
     public void setPosInLoop()
     {
         Vector3 rPosToastal = getRPosTotal();
-        pos.x += rPosToastal.r-pPos.x;
-        pos.y += 0.5*(rPosToastal.x-rPosToastal.y)-pPos.y;
-        pPos = new Vector3(rPosToastal.r,0.5*(rPosToastal.x-rPosToastal.y),0);
+        double fStep = 0.5*(rPosToastal.x-rPosToastal.y)-pPos.y;
+        double sStep = rPosToastal.r-pPos.x;
+        double rStep = ((rPosToastal.x+rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2)-pPos.r;
+
+        pos.x += sStep;
+        pos.y += fStep;
+        pos.r += rStep;
+        pPos = new Vector3(rPosToastal.r,0.5*(rPosToastal.x-rPosToastal.y),((rPosToastal.x+rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2));
     }
     private Vector3 getRPosTotal()
     {

@@ -53,8 +53,9 @@ public class EncoderTest extends OpMode {
     public void loop() {
         rowboat.setPosInLoop();
         //telemetry.addData("center", rowboat.r);
-        telemetry.addData("right", rowboat.pos.x);
-        telemetry.addData("left", rowboat.pos.y);
+        telemetry.addData("Side", rowboat.pos.x);
+        telemetry.addData("Forward", rowboat.pos.y);
+        telemetry.addData("Rote", Math.toDegrees(rowboat.pos.r));
         telemetry.update();
     }
 
