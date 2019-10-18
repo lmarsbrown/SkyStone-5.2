@@ -26,7 +26,7 @@ public class Robot{
         pPos.y = 0.5*(rPosToastal.x-rPosToastal.y);
         pPos.r = ((rPosToastal.x+rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2);
     }
-    public void setPosInLoop()
+    public void relocalize()
     {
         Vector3 rPosToastal = getRPosTotal();
         double fStep = 0.5*(rPosToastal.x-rPosToastal.y)-pPos.y;

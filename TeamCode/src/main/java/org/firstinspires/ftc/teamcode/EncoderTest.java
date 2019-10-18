@@ -51,7 +51,7 @@ public class EncoderTest extends OpMode {
      */
     @Override
     public void loop() {
-        rowboat.setPosInLoop();
+        rowboat.relocalize();
         //telemetry.addData("center", rowboat.r);
         telemetry.addData("Side", rowboat.pos.x);
         telemetry.addData("Forward", rowboat.pos.y);
