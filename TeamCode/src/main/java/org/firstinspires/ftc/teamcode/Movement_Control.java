@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Odmetry.Robot_Localizer;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
@@ -64,7 +66,7 @@ public class Movement_Control extends LinearOpMode {
     float turnMultiplier;
     float sideMultiplierInverse;
     double speedMultiplier;
-
+    Robot_Localizer rowboat;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -84,6 +86,7 @@ public class Movement_Control extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -91,6 +94,7 @@ public class Movement_Control extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            rowboat.relocalize();
             // Define some variables because you feel like it.
             sideMultiplierInverse                   = abs(gamepad1.left_stick_x + gamepad1.left_stick_y);
             turnMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
@@ -114,6 +118,7 @@ public class Movement_Control extends LinearOpMode {
             }
 
             telemetry.addData("Status", "Running");
+            telemetry.addData("r",rowboat.pos.r);
             telemetry.update();
         }
     }

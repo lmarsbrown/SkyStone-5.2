@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Odmetry.Robot;
+import org.firstinspires.ftc.teamcode.Odmetry.Robot_Localizer;
 
 
 @TeleOp(name="Encoder Test", group="Iterative Opmode")
@@ -18,7 +18,7 @@ public class EncoderTest extends OpMode {
     private DcMotor center = null;
     private DcMotor right = null;
     private DcMotor left = null;
-    private Robot rowboat;
+    private Robot_Localizer rowboat;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -28,7 +28,7 @@ public class EncoderTest extends OpMode {
         center = hardwareMap.get(DcMotor.class,"right_back");
         right = hardwareMap.get(DcMotor.class,"right_front");
         left = hardwareMap.get(DcMotor.class,"left_back");
-        rowboat = new Robot(left,right,center);
+        rowboat = new Robot_Localizer(left,right,center);
     }
 
     /*
