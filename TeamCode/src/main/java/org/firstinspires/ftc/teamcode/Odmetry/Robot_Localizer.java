@@ -39,10 +39,12 @@ public class Robot_Localizer{
         double sStep = rPosToastal.r-pPos.x;
         double rStep = (((rPosToastal.x-rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2)-pPos.r)/*fOffsetMulti*/;
         //Blending rotation and forward/sideways motion
-        double arcRad = fStep/(pos.r+rStep);
-        pos.x += sStep;
-        pos.y += fStep;
-        pos.r += rStep;
+        double arcRad = fStep/(rStep+0.0001);
+        Vector2 relativeArcPos = new Vector2(Math.cos(Math.PI-rStep)*arcRad+(pos.x+arcRad),Math.sin(Math.PI-rStep)*arcRad+pos.y);
+        double r = pos.r;
+        pos = MyMath.rotatePoint(pos.getV2(),relativeArcPos,1).getV3(r);
+        pos.x += Math.sin(pos.r)*sStep;
+        pos.y -= Math.cos(pos.r)*sStep;
         //Setting previous pos var
         pPos = new Vector3(rPosToastal.r,0.5*(rPosToastal.x+rPosToastal.y),((rPosToastal.x-rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2));
     }

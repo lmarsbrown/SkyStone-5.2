@@ -14,6 +14,10 @@ public class Vector2 {
         x/=dist;
         y/=dist;
     }
+    public Vector3 getV3(double r)
+    {
+        return new Vector3(this.x,this.y,r);
+    }
     public double getLength()
     {
         return(Math.hypot(x,y));
