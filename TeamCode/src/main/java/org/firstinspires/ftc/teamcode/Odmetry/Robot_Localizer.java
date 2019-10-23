@@ -39,14 +39,16 @@ public class Robot_Localizer{
         double sStep = rPosToastal.r-pPos.x;
         double rStep = (((rPosToastal.x-rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2)-pPos.r);
         //Blending rotation and forward/sideways motion
-        pos.r += rStep+0.000001;
+        pos.r += rStep;
+        if(rStep == 0)rStep = 0.00000001;
 
-        double arcRad = fStep/(rStep);
+        double arcRad = (fStep+0.00000001)/(rStep);
         Vector2 relativeArcPos = new Vector2(Math.cos(Math.PI-rStep)*arcRad+(pos.x+arcRad),Math.sin(Math.PI-rStep)*arcRad+pos.y);
-        //pos = relativeArcPos.getV3(pos.r);
+        pos.x = relativeArcPos.x;
+        pos.y = relativeArcPos.y;
 
-        pos.x += Math.sin(pos.r)*sStep;
-        pos.y -= Math.cos(pos.r)*sStep;
+        /*pos.x += Math.sin(pos.r)*sStep;
+        pos.y -= Math.cos(pos.r)*sStep;*/
         //Rounding vars
         /*pos.x = Math.round(pos.x*1000000000)*0.000000001;
         pos.y = Math.round(pos.y*1000000000)*0.000000001;*/
