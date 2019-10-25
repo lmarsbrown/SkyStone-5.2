@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
-public class Vector3 {
+public class Transform extends Vector2 {
     public double x;
     public double y;
     public double r;
-    public Vector3(double xIn, double yIn, double rIn)
+    public Transform(double x, double y, double r)
     {
-        x = xIn;
-        y = yIn;
-        r = rIn;
-    }
-    public void normalize()
-    {
-        double dist = Math.sqrt(x*x+y*y);
-        x/=dist;
-        y/=dist;
+        super(x,y);
+        this.r = r;
     }
     public double getLength()
     {

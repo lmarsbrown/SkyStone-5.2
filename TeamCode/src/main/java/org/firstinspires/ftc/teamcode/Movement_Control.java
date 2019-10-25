@@ -121,7 +121,9 @@ public class Movement_Control extends LinearOpMode {
             telemetry.addData("r",rowboat.pos.r);
             telemetry.addData("x",rowboat.pos.x);
             telemetry.addData("y",rowboat.pos.y);
-            telemetry.addData("telem",rowboat.telemetry);
+            telemetry.addData("telemA",rowboat.telemetryA);
+            telemetry.addData("telemB",rowboat.telemetryB);
+            telemetry.addData("telemC",rowboat.telemetryC);
             telemetry.update();
         }
     }

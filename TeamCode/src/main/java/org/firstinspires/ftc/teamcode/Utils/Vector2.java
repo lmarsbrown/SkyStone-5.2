@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.Utils;
 public class Vector2 {
     public double x;
     public double y;
-    public Vector2(double xIn, double yIn)
+    public Vector2(double x, double y)
     {
-        x = xIn;
-        y = yIn;
+        this.x = x;
+        this.y = y;
     }
     public void normalize()
     {
@@ -14,7 +14,7 @@ public class Vector2 {
         x/=dist;
         y/=dist;
     }
-    public void rotatePoint(Vector2 pivot,double amount)
+    public void rotate(Vector2 pivot,double amount)
     {
         //Creates translated and normalized point
         Vector2 tPoint = new Vector2(this.x-pivot.x,this.y-pivot.y);
@@ -26,9 +26,9 @@ public class Vector2 {
         this.y = (tPoint.y*Math.cos(amount)+tPoint.x* Math.sin(amount))*len+pivot.y;
 
     }
-    public Vector3 getV3(double r)
+    public Transform getTransform(double r)
     {
-        return new Vector3(this.x,this.y,r);
+        return new Transform(this.x,this.y,r);
     }
     public double getLength()
     {

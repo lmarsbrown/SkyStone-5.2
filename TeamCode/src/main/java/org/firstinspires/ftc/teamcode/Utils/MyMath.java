@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
 public class MyMath {
+    @Deprecated
     public static Vector2 rotatePoint(Vector2 pivot,Vector2 point,double amount)
     {
         //Creates translated and normalized point
