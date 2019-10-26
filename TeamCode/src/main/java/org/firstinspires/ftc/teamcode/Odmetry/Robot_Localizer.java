@@ -38,7 +38,7 @@ public class Robot_Localizer{
     {
         telemetryA = String.valueOf(encLeft.getCurrentPosition());
         telemetryB = String.valueOf(encRight.getCurrentPosition());
-        telemetryC = String.valueOf(encSide.getCurrentPosition());
+        //telemetryC = String.valueOf(encSide.getCurrentPosition());
         //Getting step vars
         Transform steps = getSteps();
         double rStep = steps.r;
@@ -47,7 +47,7 @@ public class Robot_Localizer{
         //Blending rotation and forward/sideways motion
         pos.r += rStep;
 
-        Vector2 arc = getArc(steps);
+        Transform arc = getArc(steps);
         pos.x = arc.x;
         pos.y = arc.y;
 
@@ -65,15 +65,16 @@ public class Robot_Localizer{
         Transform rPosToastal = getRPosTotal();
         double fStep = 0.5*(rPosToastal.x+rPosToastal.y)-pPos.y;
         double sStep = rPosToastal.r-pPos.x;
-        double rStep = (((rPosToastal.x-rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2)-pPos.r);
-        pPos = new Transform(rPosToastal.r,0.5*(rPosToastal.x+rPosToastal.y),((rPosToastal.x-rPosToastal.y)*Math.PI*2)/(Math.PI*encDist*2));
+        double rStep = ((rPosToastal.x-rPosToastal.y)/(encDist))-pPos.r;
+        pPos = new Transform(rPosToastal.r,0.5*(rPosToastal.x+rPosToastal.y),(rPosToastal.x-rPosToastal.y)/(encDist));
         return new Transform(sStep,fStep,rStep);
     }
-    private Vector2 getArc(Transform steps)
+    private Transform getArc(Transform steps)
     {
         if(steps.r == 0)steps.r = 0.00000001;
         double arcRad = steps.y/steps.r;
-        Vector2 relativeArcPos = new Vector2(Math.cos(Math.PI-steps.r)*arcRad+(pos.x+arcRad),Math.sin(Math.PI-steps.r)*arcRad+pos.y);
+        Transform relativeArcPos = new Transform(Math.cos(Math.PI-steps.r)*arcRad+(pos.x+arcRad),Math.sin(Math.PI-steps.r)*arcRad+pos.y,pos.r);
+        relativeArcPos.rotate(pos,pos.r);
         //relativeArcPos.rotate(pos.getV2(),1);
         return relativeArcPos;
     }
