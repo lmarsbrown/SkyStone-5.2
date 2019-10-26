@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 @TeleOp(name="Encoder Test", group="Iterative Opmode")
 //@Disabled
-public class EncoderTest extends OpMode {
+public class CalibrationAuto extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor center = null;
@@ -27,7 +27,7 @@ public class EncoderTest extends OpMode {
         center = hardwareMap.get(DcMotor.class,"right_back");
         right = hardwareMap.get(DcMotor.class,"right_front");
         left = hardwareMap.get(DcMotor.class,"left_back");
-        rowboat = new Robot_Localizer(left,right,center);
+        rowboat = new Robot_Localizer(left,right,center,1);
     }
 
     /*
@@ -51,13 +51,7 @@ public class EncoderTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        //telemetry.addData("center", rowboat.r);
-        Transform test = new Transform(1,0,0);
-        test.rotate(new Transform(0,0,0),1.57);
-        telemetry.addData("test",test.x);
-        telemetry.addData("Side", rowboat.pos.x);
-        telemetry.addData("Forward", rowboat.pos.y);
-        telemetry.addData("Rote", Math.toDegrees(rowboat.pos.r));
+
         telemetry.update();
     }
 
