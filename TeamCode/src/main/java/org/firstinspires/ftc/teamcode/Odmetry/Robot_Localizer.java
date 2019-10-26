@@ -19,6 +19,8 @@ public class Robot_Localizer{
     public String telemetryA = "";
     public String telemetryB = "";
     public String telemetryC = "";
+    private double calibrationConstant = 1;
+    private double calibationCount = 1;
     public Robot_Localizer(DcMotor encLeft,DcMotor encRight,DcMotor encSide)
     {
         //Setting vars to constructor values
@@ -50,9 +52,22 @@ public class Robot_Localizer{
         Transform arc = getArc(steps);
         pos.x = arc.x;
         pos.y = arc.y;
-
-
     }
+    //All the calibration functions
+    public void startCalibration()
+    {
+        calibationCount = 1;
+    }
+    public void addCalibationStep(double rote)
+    {
+        calibrationConstant += 1;
+        calibationCount++;
+    }
+    public void endCalibration()
+    {
+        calibrationConstant /= calibationCount;
+    }
+
     private Transform getRPosTotal()
     {
         return new Transform(encRight.getCurrentPosition()*countsPerRev*wheelCirc,(encLeft.getCurrentPosition()*countsPerRev*wheelCirc),encSide.getCurrentPosition()*countsPerRev*wheelCirc);
