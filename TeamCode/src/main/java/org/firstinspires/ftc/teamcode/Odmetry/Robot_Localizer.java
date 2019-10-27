@@ -49,7 +49,7 @@ public class Robot_Localizer {
         Transform rPosToastal = getRPosTotal();
 
         //Blending rotation and forward/sideways motion
-        pos.r += rStep;
+        pos.r += rStep*calibrationConstant;
 
         Transform arc = getArc(steps);
         pos.x = arc.x;
@@ -70,10 +70,11 @@ public class Robot_Localizer {
     public void endCalibration() {
         calibrationConstant /= calibrationCount;
         calibrating = false;
+        calibrationCount = 1;
     }
-    public double getCalibrationConst()
-    {
-        return calibrationConstant;
+    public double getCalibrationConst() throws Exception {
+        if(!calibrating)return calibrationConstant;
+        else throw(new Exception("Cannot get calibrationd const while calibrating"));
     }
 
     private Transform getRPosTotal() {
