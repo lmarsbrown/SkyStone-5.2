@@ -86,7 +86,7 @@ public class Movement_Control extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
-        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.92578);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

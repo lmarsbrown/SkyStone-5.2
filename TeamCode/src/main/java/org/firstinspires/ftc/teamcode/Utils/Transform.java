@@ -20,7 +20,7 @@ public class Transform {
     }
     public void rotate(Transform pivot,double amount)
     {
-        //Creates translated and normalized point
+        //Creates translated and normalized point+
         Transform tPoint = new Transform(this.x-pivot.x,this.y-pivot.y,this.r);
         double len = tPoint.getLength();
         if(len == 0)len = zeroDec;

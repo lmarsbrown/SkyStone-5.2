@@ -52,7 +52,7 @@ public class Robot_Localizer {
         pos.r += rStep*calibrationConstant;
 
         Transform arc = getArc(steps);
-        pos.x = arc.x;
+        pos.x += steps.x;
         pos.y = arc.y;
     }
 
