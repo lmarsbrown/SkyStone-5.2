@@ -96,26 +96,26 @@ public class Movement_Control extends LinearOpMode {
         while (opModeIsActive()) {
             rowboat.relocalize();
             //Defining variables to multiply by to scale motor power
-            sideMultiplierInverse                   = abs(gamepad1.left_stick_x + gamepad1.left_stick_y);
+            sideMultiplierInverse                   = abs(gamepad1.left_stick_x) + abs(gamepad1.left_stick_y) + abs(gamepad1.right_stick_x);
             sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
             if(gamepad1.left_bumper) speedMultiplier = 0.25;
             else                     speedMultiplier = 1;
 
-            if(gamepad1.right_stick_x==0)
+            if(gamepad1.right_stick_x==0||true)
             {
                 // Make the motors move, using the aforementioned variables.
-                leftFront.setPower( (gamepad1.left_stick_y * sideMultiplier - gamepad1.left_stick_x * sideMultiplier) * speedMultiplier);
-                rightFront.setPower((gamepad1.left_stick_y * sideMultiplier + gamepad1.left_stick_x * sideMultiplier) * speedMultiplier);
-                leftBack.setPower(  (gamepad1.left_stick_y * sideMultiplier + gamepad1.left_stick_x * sideMultiplier) * speedMultiplier);
-                rightBack.setPower( (gamepad1.left_stick_y * sideMultiplier - gamepad1.left_stick_x * sideMultiplier) * speedMultiplier);
-            }
+                leftFront.setPower( (gamepad1.left_stick_y * sideMultiplier - gamepad1.left_stick_x * sideMultiplier + gamepad1.right_stick_x * sideMultiplier) * speedMultiplier);
+                rightFront.setPower((gamepad1.left_stick_y * sideMultiplier + gamepad1.left_stick_x * sideMultiplier - gamepad1.right_stick_x * sideMultiplier) * speedMultiplier);
+                leftBack.setPower(  (gamepad1.left_stick_y * sideMultiplier + gamepad1.left_stick_x * sideMultiplier + gamepad1.right_stick_x * sideMultiplier) * speedMultiplier);
+                rightBack.setPower( (gamepad1.left_stick_y * sideMultiplier - gamepad1.left_stick_x * sideMultiplier - gamepad1.right_stick_x * sideMultiplier) * speedMultiplier);
+            }/*
             else
             {
                 leftFront.setPower(  gamepad1.right_stick_x * speedMultiplier);
                 leftBack.setPower(   gamepad1.right_stick_x * speedMultiplier);
                 rightFront.setPower(-gamepad1.right_stick_x * speedMultiplier);
                 rightBack.setPower( -gamepad1.right_stick_x * speedMultiplier);
-            }
+            }*/
 
             telemetry.addData("Status", "Running");
             telemetry.addData("r",rowboat.pos.r);

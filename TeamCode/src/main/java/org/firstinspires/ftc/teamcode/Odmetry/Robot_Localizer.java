@@ -49,10 +49,12 @@ public class Robot_Localizer {
         Transform rPosToastal = getRPosTotal();
 
         //Blending rotation and forward/sideways motion
-        pos.r += rStep*calibrationConstant;
 
         Transform arc = getArc(steps);
-        pos.x += steps.x;
+
+        pos.r += rStep*calibrationConstant;
+
+        pos.x = arc.x;
         pos.y = arc.y;
     }
 
