@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Odmetry.Robot_Localizer;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;

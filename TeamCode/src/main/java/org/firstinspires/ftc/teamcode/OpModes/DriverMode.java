@@ -5,29 +5,41 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
+import org.firstinspires.ftc.teamcode.Robot.*;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Encoder Test", group="Iterative Opmode")
+@TeleOp(name="MOOOOVE", group="Iterative Opmode")
 //@Disabled
-public class EncoderTest extends OpMode {
+public class DriverMode extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor center = null;
     private DcMotor right = null;
     private DcMotor left = null;
     private Robot_Localizer rowboat;
-
+    private  RobotController control;
+    DcMotor leftFront;
+    DcMotor rightFront;
+    DcMotor leftBack;
+    DcMotor rightBack;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        center = hardwareMap.get(DcMotor.class,"right_back");
-        right = hardwareMap.get(DcMotor.class,"right_front");
-        left = hardwareMap.get(DcMotor.class,"left_back");
-        rowboat = new Robot_Localizer(left,right,center,1);
+        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front");
+        leftBack   = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack  = hardwareMap.get(DcMotor.class, "right_back");
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
+        control = new RobotController(rightFront,leftFront,rightBack,leftBack);
     }
 
     /*
@@ -51,13 +63,7 @@ public class EncoderTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        //telemetry.addData("center", rowboat.r);
-        Transform test = new Transform(1,0,0);
-        test.rotate(new Transform(0,0,0),1.57);
-        telemetry.addData("test",test.x);
-        telemetry.addData("Side", rowboat.pos.x);
-        telemetry.addData("Forward", rowboat.pos.y);
-        telemetry.addData("Rote", Math.toDegrees(rowboat.pos.r));
+        control.setVec(new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x));
         telemetry.update();
     }
 
