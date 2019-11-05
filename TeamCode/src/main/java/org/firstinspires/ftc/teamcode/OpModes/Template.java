@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.*;
+import org.firstinspires.ftc.teamcode.Robot.RobotController;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="MOOOOVE", group="Iterative Opmode")
+@TeleOp(name="Template", group="Iterative Opmode")
 //@Disabled
-public class DriverMode extends OpMode {
+public class Template extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor center = null;
@@ -63,7 +64,7 @@ public class DriverMode extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        control.setVec(new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x),1);
+        control.changePursuitDir();
         telemetry.update();
     }
 

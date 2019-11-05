@@ -39,4 +39,14 @@ public class Transform {
     {
         return new Transform(x,y,r);
     }
+    public Transform getAdded(Transform add)
+    {
+        return new Transform(this.x+add.x,this.y+add.y,this.r+add.r);
+    }
+    public void setOrigin(Transform origin, boolean rotate)
+    {
+        if(rotate)this.rotate(origin,-origin.r);
+        this.x -= origin.x;
+        this.y -= origin.y;
+    }
 }
