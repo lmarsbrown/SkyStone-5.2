@@ -18,7 +18,7 @@ public class DriverMode extends OpMode {
     private DcMotor right = null;
     private DcMotor left = null;
     private Robot_Localizer rowboat;
-    private  RobotController control;
+    private  Robot_Controller control;
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
@@ -39,7 +39,7 @@ public class DriverMode extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new RobotController(rightFront,leftFront,rightBack,leftBack,100,rowboat);
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,100,rowboat);
     }
 
     /*

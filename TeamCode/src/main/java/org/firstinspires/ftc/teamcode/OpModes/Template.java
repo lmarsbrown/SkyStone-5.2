@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.RobotController;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
@@ -19,7 +19,7 @@ public class Template extends OpMode {
     private DcMotor right = null;
     private DcMotor left = null;
     private Robot_Localizer rowboat;
-    private  RobotController control;
+    private  Robot_Controller control;
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
@@ -40,7 +40,7 @@ public class Template extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new RobotController(rightFront,leftFront,rightBack,leftBack,100,rowboat);
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,100,rowboat);
     }
 
     /*
