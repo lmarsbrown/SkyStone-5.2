@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Robot.Path;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
@@ -20,6 +21,7 @@ public class autoTest extends OpMode {
     private DcMotor left = null;
     private Robot_Localizer rowboat;
     private  Robot_Controller control;
+    private Path path;
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
@@ -40,7 +42,7 @@ public class autoTest extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,500,rowboat);
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,100,rowboat);
     }
 
     /*
@@ -57,6 +59,9 @@ public class autoTest extends OpMode {
     public void start() {
 
         //control.setPursuitVec(new Transform(1,0,0));
+        path = new Path();
+        path.addPoint(new Transform(0,0,0));
+        path.setEndPoint(new Transform(500,0,0));
         runtime.reset();
     }
 
@@ -66,7 +71,8 @@ public class autoTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        control.changePursuitDir();
+        control.setVecToPath(path);
+        telemetry.addData("test",control.jank);
         telemetry.update();
     }
 

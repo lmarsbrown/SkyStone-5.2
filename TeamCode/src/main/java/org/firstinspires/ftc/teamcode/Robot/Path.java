@@ -17,30 +17,33 @@ public class Path {
     {
         end = point;
     }
-    protected void setPathFollowVec(Robot_Controller robot)
+    protected boolean setPathFollowVec(Robot_Controller robot)
     {
+        robot.jank = String.valueOf(robot.robot.pos.x-end.x);
+        if(Math.hypot(robot.robot.pos.x-end.x,robot.robot.pos.y-end.y)<50)
+        {
+            robot.setVec(new Transform(0,0,0),0);
+            return true;
+        }
+        else
+        {
         if(robot.checkOnPath(points.get(points.size()-1),end))
         {
-            if(Math.hypot(robot.robot.pos.x-end.x,robot.robot.pos.y-end.y)<robot.lookahead)
-            {
-                robot.ending = true;
-                robot.setPursuitPath(robot.robot.pos,end);
-            }
-            else
-            {
-                robot.setPursuitPath(points.get(points.size()-1),end);
-            }
+            robot.ending = true;
+            robot.setPursuitPath(robot.robot.pos,end);
         }
         else
         {
             for(int i = points.size()-1; i < 1; i++)
-            {
-                if(robot.checkOnPath(points.get(i-1),points.get(i)))
                 {
-                    robot.setPursuitPath(points.get(i-1),points.get(i));
-                    break;
+                    if(robot.checkOnPath(points.get(i-1),points.get(i)))
+                    {
+                        robot.setPursuitPath(points.get(i-1),points.get(i));
+                        break;
+                    }
                 }
             }
+            return false;
         }
     }
 }

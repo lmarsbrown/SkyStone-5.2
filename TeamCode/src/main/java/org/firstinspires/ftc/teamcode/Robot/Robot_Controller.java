@@ -16,6 +16,7 @@ public class Robot_Controller {
     protected Robot_Localizer robot;
     protected double lookahead;
     protected boolean ending = false;
+    public String jank = "";
     public Robot_Controller(DcMotor rfm,DcMotor lfm,DcMotor rbm,DcMotor lbm,double lookahead, Robot_Localizer robot)
     {
         this.rfm = rfm;
@@ -27,7 +28,7 @@ public class Robot_Controller {
     }
     public void setVec(Transform dir,double power)
     {
-        double sideMultiplierInverse                   = abs(-dir.x - dir.y)+abs(dir.r);
+        double sideMultiplierInverse                   = abs(dir.x + dir.y)+abs(dir.r);
         double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
 
         lfm.setPower( (dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*power );
@@ -47,7 +48,7 @@ public class Robot_Controller {
     }
     public void changePursuitDir()
     {
-        if(ending)
+        if(ending||true)
         {
             p1.setOrigin(robot.pos,false);
             p2.setOrigin(robot.pos,false);
@@ -90,9 +91,9 @@ public class Robot_Controller {
         double b = -m*p1.x+p1.y;
         return b*b<lookahead*lookahead+m*m+b*b;
     }
-    public void setPathFollow(Path path)
+    public void setVecToPath(Path path)
     {
-
+        String.valueOf(path.setPathFollowVec(this));
     }
 }
 
