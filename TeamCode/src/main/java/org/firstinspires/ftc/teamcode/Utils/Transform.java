@@ -49,4 +49,9 @@ public class Transform {
         this.x -= origin.x;
         this.y -= origin.y;
     }
+    public void scale(double amount)
+    {
+        this.x /= amount;
+        this.y /= amount;
+    }
 }

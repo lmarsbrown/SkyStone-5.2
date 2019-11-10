@@ -40,7 +40,7 @@ public class Template extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,100,rowboat);
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
     }
 
     /*
@@ -64,7 +64,9 @@ public class Template extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        control.changePursuitDir();
+        telemetry.addData("x",rowboat.pos.x);
+        telemetry.addData("y",rowboat.pos.y);
+        telemetry.addData("r",rowboat.pos.r);
         telemetry.update();
     }
 
