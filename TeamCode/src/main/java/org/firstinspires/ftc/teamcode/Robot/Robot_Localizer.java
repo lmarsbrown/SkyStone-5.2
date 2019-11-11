@@ -101,7 +101,7 @@ public class Robot_Localizer {
         if (steps.r == 0) steps.r = 0.00000001;
         double d = Math.hypot(steps.x, steps.y);
         double arcRad = d / steps.r;
-        Transform relativeArcPos = new Transform(Math.cos(Math.PI - steps.r) * arcRad + (pos.x + arcRad), Math.sin(Math.PI - steps.r) * arcRad + pos.y, pos.r);
+        Transform relativeArcPos = new Transform(Math.cos(Math.PI - steps.r) * arcRad + (pos.x + arcRad), (Math.sin(Math.PI - steps.r) * arcRad) + pos.y, pos.r);
         telemetryC = String.valueOf(pos.r + Math.atan2(steps.x, steps.y));
         relativeArcPos.rotate(pos, pos.r + Math.atan2(steps.x, steps.y));
         //relativeArcPos.rotate(pos.getV2(),1);
