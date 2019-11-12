@@ -56,6 +56,7 @@ public class autoTest extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        control.gotoPoint(new Transform(-1000,-500,0));
     }
 
     /*
@@ -64,14 +65,13 @@ public class autoTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        control.gotoPoint(new Transform(-1800,-600,0));
         /*double turnToOffset = (1.57+2*Math.PI)-((rowboat.pos.r%(Math.PI*2))%-(Math.PI*2));
         double turnToMulti = (1-(0.8/(1+0.5*turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
         if(Math.abs(turnToOffset)>0.03)control.setVec(new Transform(0,0,turnToMulti),1);
         else control.setVec(new Transform(0,0,0),0);*/
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
-        telemetry.addData("r",rowboat.pos.r);
+        telemetry.addData("r",Math.toDegrees(rowboat.pos.r));
         telemetry.addData("telem",control.telem);
         telemetry.update();
     }

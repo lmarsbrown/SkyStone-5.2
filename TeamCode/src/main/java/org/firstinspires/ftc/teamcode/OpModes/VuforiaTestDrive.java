@@ -14,11 +14,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
+import org.firstinspires.ftc.teamcode.Utils.Interval;
+import org.firstinspires.ftc.teamcode.Utils.Lambda;
+import org.firstinspires.ftc.teamcode.Utils.Transform;
+import org.firstinspires.ftc.teamcode.Utils.VuLambda;
 
 
-@TeleOp(name="Vuforia", group="Iterative Opmode")
+@TeleOp(name="VuforiaTestDrive", group="Iterative Opmode")
 //@Disabled
-public class Vuforia extends OpMode {
+public class VuforiaTestDrive extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor center = null;
@@ -26,6 +30,7 @@ public class Vuforia extends OpMode {
     private DcMotor left = null;
     private Robot_Localizer rowboat;
     private  Robot_Controller control;
+    private Interval inter;
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
@@ -34,12 +39,13 @@ public class Vuforia extends OpMode {
     WebcamName webcamName;
     VuforiaTrackables skystoneTrackables;
     VuforiaTrackable targetElement;
+    VuforiaTrackableDefaultListener block;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        /*leftFront  = hardwareMap.get(DcMotor.class, "left_front");
+        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         leftBack   = hardwareMap.get(DcMotor.class, "left_back");
         rightBack  = hardwareMap.get(DcMotor.class, "right_back");
@@ -50,7 +56,7 @@ public class Vuforia extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);*/
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         //Vuforia init
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -85,6 +91,13 @@ public class Vuforia extends OpMode {
     @Override
     public void start() {
         skystoneTrackables.activate();
+        detect(targetElement,(block)->{
+            OpenGLMatrix pose = block.getFtcCameraFromTarget();
+            telemetry.addData("test",pose);
+            telemetry.update();
+            control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0));
+            return 0;
+        });
         runtime.reset();
     }
 
@@ -93,10 +106,11 @@ public class Vuforia extends OpMode {
      */
     @Override
     public void loop() {
-        //rowboat.relocalize();
-        OpenGLMatrix pose = getPose(targetElement);
-        if(pose != null)telemetry.addData("x",getPose(targetElement).getRow(2).get(3)*0.9);
-        telemetry.update();
+        rowboat.relocalize();
+        /*OpenGLMatrix pose = getBlock(targetElement).getFtcCameraFromTarget();
+        if(pose != null)telemetry.addData("x",pose.getRow(0).get(3));
+        if(pose != null)telemetry.addData("y",pose.getRow(2).get(3)*0.9);*/
+        //telemetry.update();
     }
 
     /*
@@ -105,17 +119,31 @@ public class Vuforia extends OpMode {
     @Override
     public void stop() {
     }
-    private OpenGLMatrix getPose(VuforiaTrackable trackable)
+    private VuforiaTrackableDefaultListener getBlock(VuforiaTrackable trackable)
     {
         if(trackable != null)
+
         {
             VuforiaTrackable.Listener listener = trackable.getListener();
             if(listener instanceof VuforiaTrackableDefaultListener)
             {
-                return ((VuforiaTrackableDefaultListener)listener).getFtcCameraFromTarget();
+                return ((VuforiaTrackableDefaultListener)listener);
             }
         }
         return null;
+    }
+    private void detect(VuforiaTrackable trackable, VuLambda callback)
+    {
+        block = getBlock(targetElement);
+        inter = new Interval((obj)->{
+            telemetry.addData("test","test");
+            telemetry.update();
+            block = getBlock(targetElement);
+            if(block != null){callback.call(block);return 1;}
+            return 0;
+
+        },500);
+        inter.run();
     }
 
 }

@@ -22,6 +22,8 @@ public class Robot_Localizer {
     private double calibrationConstant = 1;
     private double calibrationCount = 1;
     private boolean calibrating = false;
+    protected Lambda onLocalize;
+    protected Transform steps;
 
     public Robot_Localizer(DcMotor encLeft, DcMotor encRight, DcMotor encSide, double calibrationConst) {
         //Setting vars to constructor values
@@ -44,7 +46,7 @@ public class Robot_Localizer {
         telemetryB = String.valueOf(encRight.getCurrentPosition());
         //telemetryC = String.valueOf(encSide.getCurrentPosition());
         //Getting step vars
-        Transform steps = getSteps();
+        steps = getSteps();
         double rStep = steps.r;
         Transform rPosToastal = getRPosTotal();
 
@@ -56,6 +58,14 @@ public class Robot_Localizer {
 
         pos.x = arc.x;
         pos.y = arc.y;
+
+        try {
+            onLocalize.call(new Object());
+        }
+        catch(Exception err)
+        {
+
+        }
     }
 
     //All the calibration functions

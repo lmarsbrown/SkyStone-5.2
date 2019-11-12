@@ -63,10 +63,13 @@ public class DriverMode extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        control.setVec(new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x),1);
+        Transform tVec = new Transform(gamepad1.right_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
+        tVec.rotate(new Transform(0,0,0),-rowboat.pos.r);
+        control.setVec(tVec,1);
         telemetry.addData("r",rowboat.pos.r);
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
+        telemetry.addData("telem",control.telem);
         telemetry.update();
     }
 
