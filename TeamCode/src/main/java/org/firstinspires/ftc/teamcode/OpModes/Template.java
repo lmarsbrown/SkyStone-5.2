@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
@@ -15,9 +16,6 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 public class Template extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor center = null;
-    private DcMotor right = null;
-    private DcMotor left = null;
     private Robot_Localizer rowboat;
     private  Robot_Controller control;
     DcMotor leftFront;
@@ -33,6 +31,7 @@ public class Template extends OpMode {
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         leftBack   = hardwareMap.get(DcMotor.class, "left_back");
         rightBack  = hardwareMap.get(DcMotor.class, "right_back");
+
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -64,6 +63,7 @@ public class Template extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
+
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",rowboat.pos.r);

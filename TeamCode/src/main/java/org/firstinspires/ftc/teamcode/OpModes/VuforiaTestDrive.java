@@ -95,7 +95,7 @@ public class VuforiaTestDrive extends OpMode {
             OpenGLMatrix pose = block.getFtcCameraFromTarget();
             telemetry.addData("test",pose);
             telemetry.update();
-            control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0));
+            control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
             return 0;
         });
         runtime.reset();
@@ -139,7 +139,7 @@ public class VuforiaTestDrive extends OpMode {
             telemetry.addData("test","test");
             telemetry.update();
             block = getBlock(targetElement);
-            if(block != null){callback.call(block);return 1;}
+            if(block.isVisible()){callback.call(block);return 1;}
             return 0;
 
         },500);

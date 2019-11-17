@@ -64,7 +64,7 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
-    public double gotoPointLoop(Transform point)
+    public double gotoPointLoop(Transform point, boolean near)
     {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
@@ -73,7 +73,8 @@ public class Robot_Controller {
         double fPower = 1-(0.8/(0.00003*goalDist*goalDist+1));
         telem = fPower+"";
         double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI*2))%-(Math.PI*2))));
-        double rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
+        double rPower = 0;
+        if(!near)rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
         dir.r = rPower;
 
         if(goalDist<10)
@@ -90,10 +91,10 @@ public class Robot_Controller {
         doneCount = 0;
         return doneCount;
     }
-    public void gotoPoint(Transform point)
+    public void gotoPoint(Transform point,boolean near)
     {
         robot.onLocalize = (q)->{
-            if(gotoPointLoop(point)>50)robot.onLocalize = null;
+            if(gotoPointLoop(point,near)>50)robot.onLocalize = null;
             return 0;
         };
     }

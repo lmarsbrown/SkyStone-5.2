@@ -23,6 +23,7 @@ public class DriverMode extends OpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
+    DcMotor collector;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -32,6 +33,7 @@ public class DriverMode extends OpMode {
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         leftBack   = hardwareMap.get(DcMotor.class, "left_back");
         rightBack  = hardwareMap.get(DcMotor.class, "right_back");
+        collector  = hardwareMap.get(DcMotor.class, "right_back");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -66,10 +68,11 @@ public class DriverMode extends OpMode {
         Transform tVec = new Transform(gamepad1.right_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
         tVec.rotate(new Transform(0,0,0),-rowboat.pos.r);
         control.setVec(tVec,1);
+        if(gamepad1.a)collector.setPower(0.4);
+        else collector.setPower(0);
         telemetry.addData("r",rowboat.pos.r);
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
-        telemetry.addData("telem",control.telem);
         telemetry.update();
     }
 

@@ -1,0 +1,129 @@
+<?xml version="1.0" standalone="yes"?>
+<CalibrationProject>
+  <xs:schema id="CalibrationProject" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="CalibrationProject" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ObjWidth" type="xs:int" minOccurs="0" />
+                <xs:element name="ObjHeight" type="xs:int" minOccurs="0" />
+                <xs:element name="FieldSize" type="xs:double" minOccurs="0" />
+                <xs:element name="DetectionMethod" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="images">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ImagePath" type="xs:string" minOccurs="0" />
+                <xs:element name="SourceType" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="results">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ImageCount" type="xs:int" minOccurs="0" />
+                <xs:element name="focus_lenX" type="xs:double" minOccurs="0" />
+                <xs:element name="focus_lenY" type="xs:double" minOccurs="0" />
+                <xs:element name="PrincipalX" type="xs:double" minOccurs="0" />
+                <xs:element name="PrincipalY" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist1" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist2" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist3" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist4" type="xs:double" minOccurs="0" />
+                <xs:element name="focus_lenX_er" type="xs:double" minOccurs="0" />
+                <xs:element name="focus_lenY_er" type="xs:double" minOccurs="0" />
+                <xs:element name="PrincipalX_er" type="xs:double" minOccurs="0" />
+                <xs:element name="PrincipalY_er" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist1_er" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist2_er" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist3_er" type="xs:double" minOccurs="0" />
+                <xs:element name="Dist4_er" type="xs:double" minOccurs="0" />
+                <xs:element name="dc_AllImage_errX" type="xs:double" minOccurs="0" />
+                <xs:element name="dc_AllImage_errY" type="xs:double" minOccurs="0" />
+                <xs:element name="Calib_Date" type="xs:string" minOccurs="0" />
+                <xs:element name="Calib_Type" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <data>
+    <ObjWidth>5</ObjWidth>
+    <ObjHeight>8</ObjHeight>
+    <FieldSize>28</FieldSize>
+    <DetectionMethod>3</DetectionMethod>
+  </data>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_46_37_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_46_42_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_46_48_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_02_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_08_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_15_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_20_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_23_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_30_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_35_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <images>
+    <ImagePath>C:\Users\usher\Pictures\Camera Roll\WIN_20191111_10_47_42_Pro.jpg</ImagePath>
+    <SourceType>0</SourceType>
+  </images>
+  <results>
+    <ImageCount>11</ImageCount>
+    <focus_lenX>1525.9382052141732</focus_lenX>
+    <focus_lenY>1519.6704390374321</focus_lenY>
+    <PrincipalX>923.39762027320171</PrincipalX>
+    <PrincipalY>475.6358616163518</PrincipalY>
+    <Dist1>-0.057453087094517262</Dist1>
+    <Dist2>0.042652392638600836</Dist2>
+    <Dist3>-0.0095440067569678311</Dist3>
+    <Dist4>-0.00708144927763865</Dist4>
+    <focus_lenX_er>13.870601654052734</focus_lenX_er>
+    <focus_lenY_er>13.891690254211426</focus_lenY_er>
+    <PrincipalX_er>11.06614875793457</PrincipalX_er>
+    <PrincipalY_er>10.901128768920898</PrincipalY_er>
+    <Dist1_er>0.026648454368114471</Dist1_er>
+    <Dist2_er>0.26087018847465515</Dist2_er>
+    <Dist3_er>0.001595144160091877</Dist3_er>
+    <Dist4_er>0.0019380798330530524</Dist4_er>
+    <dc_AllImage_errX>0.55128199000059286</dc_AllImage_errX>
+    <dc_AllImage_errY>0.71484368067314141</dc_AllImage_errY>
+    <Calib_Date>11/11/2019 10:52:50 AM</Calib_Date>
+    <Calib_Type>2</Calib_Type>
+  </results>
+</CalibrationProject>
