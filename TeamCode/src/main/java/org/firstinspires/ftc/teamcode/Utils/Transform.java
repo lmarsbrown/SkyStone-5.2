@@ -49,6 +49,14 @@ public class Transform {
         this.x -= origin.x;
         this.y -= origin.y;
     }
+    public Transform getSetOrigin(Transform origin, boolean rotate)
+    {
+        if(rotate)this.rotate(origin,-origin.r);
+        Transform output = this.clone();
+        output.x -= origin.x;
+        output.y -= origin.y;
+        return output;
+    }
     public void scale(double amount)
     {
         this.x /= amount;

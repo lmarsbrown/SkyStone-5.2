@@ -4,7 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Utils.Interval;
 import org.firstinspires.ftc.teamcode.Utils.Lambda;
+import org.firstinspires.ftc.teamcode.Utils.MyMath;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
+
+import java.util.Vector;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -64,8 +67,8 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
-    public double gotoPointLoop(Transform point, boolean near)
-    {
+    public double gotoPointLoop(Transform point, boolean near,boolean rote)
+        {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
@@ -81,7 +84,7 @@ public class Robot_Controller {
         {
             double turnToOffset = (point.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
-            if(Math.abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
+            if(Math.abs(turnToOffset)>0.03&&rote)setVec(new Transform(0,0,turnToMulti),1);
             else setVec(new Transform(0,0,0),0);doneCount++;return doneCount;
         }
         else
@@ -91,10 +94,48 @@ public class Robot_Controller {
         doneCount = 0;
         return doneCount;
     }
+    public void followPathLoop(Vector<Transform> path, double lookahead)
+    {
+        Transform cPoint = path.get(0);
+        Transform nPoint = path.get(1);
+        int index = 0;
+        boolean ending = false;
+
+        if(Math.abs((cPoint.getSetOrigin(robot.pos,false).getLength()+nPoint.getSetOrigin(robot.pos,false).getLength())-10)<10)
+        {
+            cPoint = nPoint;
+            index++;
+            if(index<path.size())
+            {
+                nPoint = path.get(index+1);
+            }
+            else
+            {
+                ending = true;
+            }
+        }
+        if(path.get(index).getSetOrigin(robot.pos,false).getLength()>=lookahead||ending)
+        {
+            gotoPointLoop(cPoint,ending&&cPoint.getSetOrigin(robot.pos,false).getLength()<lookahead,ending);
+        }
+        else
+        {
+            double f = cPoint.getSetOrigin(robot.pos,false).getLength();
+            double s = Math.sqrt((lookahead+f)*(lookahead-f));
+            Transform dir = new Transform(s,f,cPoint.r);
+            Transform relativeDir = robot.pos.clone();
+            relativeDir.setOrigin(cPoint,false);
+            dir.normalize();
+            dir.rotate(robot.pos,Math.PI-Math.atan2(relativeDir.y,relativeDir.x));
+            cPoint = dir;
+            gotoPointLoop(dir,false,false);
+        }
+
+    }
     public void gotoPoint(Transform point,boolean near)
     {
         robot.onLocalize = (q)->{
-            if(gotoPointLoop(point,near)>50)robot.onLocalize = null;
+            if(gotoPointLoop(point,near,true)>50)robot.onLocalize = null;
             return 0;
         };
     }

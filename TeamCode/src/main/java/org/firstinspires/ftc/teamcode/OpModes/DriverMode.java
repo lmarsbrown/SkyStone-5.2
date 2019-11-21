@@ -66,7 +66,7 @@ public class DriverMode extends OpMode {
     public void loop() {
         rowboat.relocalize();
         Transform tVec = new Transform(gamepad1.right_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
-        tVec.rotate(new Transform(0,0,0),-rowboat.pos.r);
+        // tVec.rotate(new Transform(0,0,0),-rowboat.pos.r);
         control.setVec(tVec,1);
         if(gamepad1.a)collector.setPower(0.4);
         else collector.setPower(0);

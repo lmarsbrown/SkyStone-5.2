@@ -57,7 +57,7 @@ public class autoTest extends OpMode {
     public void start() {
         runtime.reset();
 
-        control.gotoPoint(new Transform(-1000,-500,0),false);
+        control.gotoPoint(new Transform(-1000,-500,0),true);
     }
 
     /*
