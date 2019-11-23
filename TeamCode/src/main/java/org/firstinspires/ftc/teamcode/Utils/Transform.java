@@ -43,6 +43,13 @@ public class Transform {
     {
         return new Transform(this.x+add.x,this.y+add.y,this.r+add.r);
     }
+    public void add(Transform vec)
+    {
+        this.x += vec.x;
+        this.y += vec.y;
+        this.r += vec.r;
+
+    }
     public void setOrigin(Transform origin, boolean rotate)
     {
         if(rotate)this.rotate(origin,-origin.r);
@@ -61,5 +68,11 @@ public class Transform {
     {
         this.x /= amount;
         this.y /= amount;
+    }
+    public void stepAtPoint(Transform dir, double amount)
+    {
+        dir.normalize();
+        dir.scale(amount);
+        this.add(dir);
     }
 }

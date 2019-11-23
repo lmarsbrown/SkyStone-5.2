@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
+import java.util.Vector;
+
 
 @TeleOp(name="autoTest", group="Iterative Opmode")
 //@Disabled
@@ -20,6 +22,7 @@ public class autoTest extends OpMode {
     private DcMotor left = null;
     private Robot_Localizer rowboat;
     private  Robot_Controller control;
+    private Vector<Transform> path = new Vector<>();
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
@@ -41,6 +44,11 @@ public class autoTest extends OpMode {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
+
+        path.add(new Transform(0,0,0));
+        path.add(new Transform(0,1000,0));
+        path.add(new Transform(500,0,0));
+
     }
 
     /*
@@ -57,7 +65,7 @@ public class autoTest extends OpMode {
     public void start() {
         runtime.reset();
 
-        control.gotoPoint(new Transform(-1000,-500,0),true);
+        //control.gotoPoint(new Transform(-1000,-500,0),true);
     }
 
     /*
@@ -66,10 +74,12 @@ public class autoTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        /*double turnToOffset = (1.57+2*Math.PI)-((rowboat.pos.r%(Math.PI*2))%-(Math.PI*2));
-        double turnToMulti = (1-(0.8/(1+0.5*turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
-        if(Math.abs(turnToOffset)>0.03)control.setVec(new Transform(0,0,turnToMulti),1);
-        else control.setVec(new Transform(0,0,0),0);*/
+
+        control.followPathLoop(path,100);
+
+
+
+
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",Math.toDegrees(rowboat.pos.r));
