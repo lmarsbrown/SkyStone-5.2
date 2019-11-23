@@ -31,6 +31,7 @@ public class Robot_Controller {
     }
     public void setVec(Transform dir, double power)
     {
+        dir.normalize();
         double sideMultiplierInverse                   = abs(dir.x + dir.y)+abs(dir.r);
         double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
 
