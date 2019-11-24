@@ -63,9 +63,15 @@ public class autoTest extends OpMode {
      */
     @Override
     public void start() {
+        control.gotoPoint(new Transform(0,-2000,0),false,false,0.3,(Object obj)->{
+            control.gotoPoint(new Transform(1000,-2000,0),true,true,0.3,(Object obj2)->{
+                return 0;
+            });
+            return 0;
+        });
         runtime.reset();
 
-        //control.gotoPoint(new Transform(-1000,-500,0),true);
+        //control.gotoPoint(new Transform(-1000,-500,0),true);..
     }
 
     /*
@@ -75,7 +81,7 @@ public class autoTest extends OpMode {
     public void loop() {
         rowboat.relocalize();
 
-        control.followPathLoop(path,100);
+
 
 
 

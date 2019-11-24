@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.Robot.*;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="\"row\"*3+\"ur boat\"", group="Iterative Opmode")
+@TeleOp(name="Field-Centric Driving", group="Iterative Opmode")
 //@Disabled
-public class DriverMode extends OpMode {
+public class FieldCentric extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor center = null;
@@ -23,11 +23,13 @@ public class DriverMode extends OpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
-    DcMotor collector;
     DcMotor horizontal_extender;
     DcMotor vertical_extender;
     double gp1_percent_pwr;
     double gp2_percent_pwr;
+    Transform saved_robot_pos;
+    Transform robot_vector;
+    boolean going_to_pt;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -37,7 +39,6 @@ public class DriverMode extends OpMode {
         rightFront          = hardwareMap.get(DcMotor.class, "right_front");
         leftBack            = hardwareMap.get(DcMotor.class, "left_back");
         rightBack           = hardwareMap.get(DcMotor.class, "right_back");
-        collector           = hardwareMap.get(DcMotor.class, "right_back");
         horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
         // Most robots need the motor on one side to be reversed to drive forward
@@ -46,6 +47,12 @@ public class DriverMode extends OpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
     }
@@ -63,6 +70,7 @@ public class DriverMode extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        going_to_pt = false;
     }
 
     /*
@@ -71,24 +79,34 @@ public class DriverMode extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        Transform tVec = new Transform(gamepad1.right_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
-        // tVec.rotate(new Transform(0,0,0),-rowboat.pos.r);
+        robot_vector = new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
+
         if(gamepad1.left_bumper) gp1_percent_pwr = 0.25;
         else gp1_percent_pwr = 1;
 
         if(gamepad2.left_bumper) gp2_percent_pwr = 0.25;
         else gp2_percent_pwr = 1;
 
-        control.setVec(tVec, gp1_percent_pwr);
+        if(gamepad1.y) saved_robot_pos = rowboat.pos.clone();
+        if(gamepad1.x && saved_robot_pos != null && !going_to_pt)
+        {
+            going_to_pt = true;
+            control.gotoPoint(saved_robot_pos, true, true,0.2, (Object obj)->{going_to_pt = false; return 0;});
+        }
 
-        if(gamepad1.a) collector.setPower(0.4 * gp1_percent_pwr);
-        else collector.setPower(0);
+        if(gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
+            going_to_pt = false;
+            control.clearGoto();
+        }
 
-        if(gamepad2.dpad_up) horizontal_extender.setPower(gp2_percent_pwr);
-        else if(gamepad2.dpad_down) horizontal_extender.setPower(-gp2_percent_pwr);
-        else horizontal_extender.setPower(0);
+        // Uncomment the next line for Field-Centric Driving
+        robot_vector.rotate(new Transform(0, 0, 0), -rowboat.pos.r);
 
-        vertical_extender.setPower(gamepad2.right_stick_y * 0.6 * gp2_percent_pwr);
+        if(!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
+
+        horizontal_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
+
+        vertical_extender.setPower(gamepad2.right_stick_y * gp2_percent_pwr);
 
         telemetry.addData("r",rowboat.pos.r);
         telemetry.addData("x",rowboat.pos.x);

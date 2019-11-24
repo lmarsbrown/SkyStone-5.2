@@ -68,20 +68,21 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
-    public double gotoPointLoop(Transform point, boolean near,boolean end)
+    public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed)
         {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
-        double fPower = 1-(0.8/(0.00003*goalDist*goalDist+1));
+        double fPower = 1-((1-minSpeed)/(0.00003*goalDist*goalDist+1));
         telem = fPower+"";
         double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI*2))%-(Math.PI*2))));
         double rPower = 0;
+
         if(!near)rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
         dir.r = rPower;
 
-        if(goalDist<10)
+        if(goalDist<10||(goalDist<60&&!end||(goalDist<60&&!end)))
         {
             double turnToOffset = (point.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
@@ -90,12 +91,12 @@ public class Robot_Controller {
         }
         else
         {
-            if(end)setVec(dir,fPower);
-            else setVec(dir,1);
+            setVec(dir,fPower);
         }
         doneCount = 0;
         return doneCount;
     }
+    /*
     public void followPathLoop(Vector<Transform> path, double lookahead)
     {
         Transform cPoint = path.get(0);
@@ -128,12 +129,18 @@ public class Robot_Controller {
 
         }
 
-    }
-    public void gotoPoint(Transform point,boolean near)
+    }*/
+
+    public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, Lambda callback)
     {
         robot.onLocalize = (q)->{
-            if(gotoPointLoop(point,near,true)>50)robot.onLocalize = null;
+            double count = gotoPointLoop(point,near,end,minSpeed);
+            if(count>50||(count>3&&!end)){robot.onLocalize = null;callback.call(new Object());}
             return 0;
         };
+    }
+    public void clearGoto()
+    {
+        robot.onLocalize = null;
     }
 }

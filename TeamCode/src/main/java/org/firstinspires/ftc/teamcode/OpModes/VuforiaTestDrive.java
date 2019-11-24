@@ -95,7 +95,7 @@ public class VuforiaTestDrive extends OpMode {
             OpenGLMatrix pose = block.getFtcCameraFromTarget();
             telemetry.addData("test",pose);
             telemetry.update();
-            control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
+            //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
             return 0;
         });
         runtime.reset();
