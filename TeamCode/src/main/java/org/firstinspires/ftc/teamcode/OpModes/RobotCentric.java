@@ -27,6 +27,7 @@ public class RobotCentric extends OpMode {
     private DcMotor vertical_extender;
 
     private Servo collector_arm;
+    private Servo Foundation_mover;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -50,6 +51,7 @@ public class RobotCentric extends OpMode {
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
+        Foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -69,6 +71,7 @@ public class RobotCentric extends OpMode {
         going_to_pt = false;
 
         collector_arm.setPosition(0.403);
+        Foundation_mover.setPosition(0);
     }
 
     @Override
@@ -99,6 +102,10 @@ public class RobotCentric extends OpMode {
             going_to_pt = true;
             control.gotoPoint(saved_robot_pos, true, true,0.2, (Object obj)->{going_to_pt = false; return 0;});
         }
+
+        if(gamepad1.a) Foundation_mover.setPosition(0.57 * gp2_percent_pwr);
+        if(gamepad1.b) Foundation_mover.setPosition(0.6 * gp2_percent_pwr);
+
 
         if(gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
