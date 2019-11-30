@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,13 +9,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.*;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Robot-Centric Driving", group="Iterative Opmode")
+@TeleOp(name="Encoder Motor Test", group="Iterative Opmode")
 //@Disabled
-public class RobotCentric extends OpMode {
+public class EncoderMotorTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -83,79 +85,40 @@ public class RobotCentric extends OpMode {
         foundation_mover.setPosition(0);
     }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
     @Override
     public void init_loop() {
     }
 
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
     @Override
     public void start() {
         runtime.reset();
     }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
     @Override
     public void loop() {
         rowboat.relocalize();
-        robot_vector = new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
 
-        if(gamepad1.left_bumper) gp1_percent_pwr = 0.25;
-        else if (gamepad1.right_bumper) gp1_percent_pwr = 0.6;
-        else gp1_percent_pwr = 1;
-
-        if(gamepad2.left_trigger > 0.8) gp2_percent_pwr = 0.25;
-        else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.6;
-        else gp2_percent_pwr = 1;
-
-        if(gamepad1.y) saved_robot_pos = rowboat.pos.clone();
-        if(gamepad1.x && saved_robot_pos != null && !going_to_pt)
-        {
-            going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, true, true,0.2, (Object obj)->{going_to_pt = false; return 0;});
-        }
-
-        if(gamepad1.a) foundation_mover.setPosition(0.57);
-        if(gamepad1.b) foundation_mover.setPosition(0);
-
-
-        if(gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
-            going_to_pt = false;
-            control.clearGoto();
-        }
-
-        if(!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
-
-        if(gamepad2.dpad_down && limit_switch_front.getState())   horizontal_extender.setPower(-gp2_percent_pwr);
-        else if(gamepad2.dpad_up && limit_switch_back.getState()) horizontal_extender.setPower( gp2_percent_pwr);
-
-        vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
-
-        if(gamepad2.y) {
-            collector_arm.setPosition(0.403);
-            inner_collector.setPower(-gp2_percent_pwr);
-            outer_collector.setPower(-gp2_percent_pwr);
-        } else if(gamepad2.a) {
-            collector_arm.setPosition(0.72);
-            inner_collector.setPower(gp2_percent_pwr);
-            outer_collector.setPower(gp2_percent_pwr);
-        } else {
-            inner_collector.setPower(gamepad2.right_stick_y * gp2_percent_pwr);
-            outer_collector.setPower(gamepad2.right_stick_y * gp2_percent_pwr);
-        }
-
-        if(gamepad2.b) {
-            // distance (4 in) divided by circumference is # of rotations
-
-        }
-
-        if(gamepad2.left_bumper)       collector_arm.setPosition(0.72);
-        else if(gamepad2.right_bumper) collector_arm.setPosition(0.403);
-
-        telemetry.addData("X Position", rowboat.pos.x);
-        telemetry.addData("Y Position", rowboat.pos.y);
-        telemetry.addData("Rotation", rowboat.pos.r);
+        telemetry.addData("ENCODER", vertical_extender.getCurrentPosition());
+        telemetry.addData("x",rowboat.pos.x);
+        telemetry.addData("y",rowboat.pos.y);
+        telemetry.addData("r",rowboat.pos.r);
         telemetry.update();
     }
 
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
     @Override
     public void stop() {
     }
+
 }

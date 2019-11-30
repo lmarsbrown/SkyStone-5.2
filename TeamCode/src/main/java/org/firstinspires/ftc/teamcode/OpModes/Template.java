@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
@@ -12,34 +16,74 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
 @TeleOp(name="Template", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Template extends OpMode {
-    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+
     private Robot_Localizer rowboat;
-    private  Robot_Controller control;
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+    private Robot_Controller control;
+
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
+    private DcMotor horizontal_extender;
+    private DcMotor vertical_extender;
+
+    private Servo collector_arm;
+    private Servo foundation_mover;
+
+    private CRServo outer_collector;
+    private CRServo inner_collector;
+
+    private double gp1_percent_pwr;
+    private double gp2_percent_pwr;
+
+    private Transform saved_robot_pos;
+    private Transform robot_vector;
+
+    private boolean going_to_pt;
+
+    private DigitalChannel limit_switch_front;
+    private DigitalChannel limit_switch_back;
+
     @Override
     public void init() {
-        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
-        rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        leftBack   = hardwareMap.get(DcMotor.class, "left_back");
-        rightBack  = hardwareMap.get(DcMotor.class, "right_back");
+        leftFront           = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront          = hardwareMap.get(DcMotor.class, "right_front");
+        leftBack            = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack           = hardwareMap.get(DcMotor.class, "right_back");
+        horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
+        vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
+        foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+
+        outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
+        inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
+
+        limit_switch_back   = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        limit_switch_front  = hardwareMap.get(DigitalChannel.class, "limit_switch2");
+
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
+
+        going_to_pt = false;
+
+        collector_arm.setPosition(0.403);
+        foundation_mover.setPosition(0);
     }
 
     /*
