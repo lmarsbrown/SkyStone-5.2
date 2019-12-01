@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -25,21 +27,35 @@ import org.firstinspires.ftc.teamcode.Utils.VuLambda;
 public class VuforiaTestDrive extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+
     private DcMotor center = null;
     private DcMotor right = null;
     private DcMotor left = null;
+
     private Robot_Localizer rowboat;
-    private  Robot_Controller control;
+    private Robot_Controller control;
+
     private Interval inter;
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
-    VuforiaLocalizer vuforia;
-    WebcamName webcamName;
-    VuforiaTrackables skystoneTrackables;
-    VuforiaTrackable targetElement;
-    VuforiaTrackableDefaultListener block;
+
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
+
+    private Servo collector_arm;
+    private Servo foundation_mover;
+
+    private CRServo outer_collector;
+    private CRServo inner_collector;
+
+    private VuforiaLocalizer vuforia;
+
+    private WebcamName webcamName;
+
+    private VuforiaTrackables skystoneTrackables;
+    private VuforiaTrackable targetElement;
+
+    private VuforiaTrackableDefaultListener block;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -49,6 +65,12 @@ public class VuforiaTestDrive extends OpMode {
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         leftBack   = hardwareMap.get(DcMotor.class, "left_back");
         rightBack  = hardwareMap.get(DcMotor.class, "right_back");
+
+        collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
+        foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+
+        outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
+        inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -90,14 +112,34 @@ public class VuforiaTestDrive extends OpMode {
      */
     @Override
     public void start() {
+        collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
-        detect(targetElement,(block)->{
-            OpenGLMatrix pose = block.getFtcCameraFromTarget();
-            telemetry.addData("test",pose);
-            telemetry.update();
-            //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
-            return 0;
+        control.gotoPoint(new Transform(0,-320,0),true,true,0.25,(Object obj)->{
+                detect(targetElement,(block)->{
+                    OpenGLMatrix pose = block.getFtcCameraFromTarget();
+                    telemetry.addData("test",pose);
+                    telemetry.update();
+                    control.gotoPoint(new Transform(-180-pose.getRow(0).get(3),this.rowboat.pos.y-pose.getRow(2).get(3)+200,0),true,true,0.2,(Object o)->{
+                        collector_arm.setPosition(0.403);
+                        inner_collector.setPower(-0.7);
+                        outer_collector.setPower(-0.7);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        inner_collector.setPower(0);
+                        outer_collector.setPower(0);
+
+                        return 0;
+                    });
+                    //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
+                    return 0;
+                });
+                return 0;
         });
+
         runtime.reset();
     }
 
@@ -118,6 +160,7 @@ public class VuforiaTestDrive extends OpMode {
      */
     @Override
     public void stop() {
+        if(inter != null) inter.clear();
     }
     private VuforiaTrackableDefaultListener getBlock(VuforiaTrackable trackable)
     {
@@ -134,16 +177,17 @@ public class VuforiaTestDrive extends OpMode {
     }
     private void detect(VuforiaTrackable trackable, VuLambda callback)
     {
-        block = getBlock(targetElement);
         inter = new Interval((obj)->{
-            telemetry.addData("test","test");
-            telemetry.update();
             block = getBlock(targetElement);
             if(block.isVisible()){callback.call(block);return 1;}
             return 0;
 
         },500);
-        inter.run();
+        telemetry.addData("test","test");
+        telemetry.update();
+        inter.start();
+        telemetry.addData("test2","test2");
+        telemetry.update();
     }
 
 }

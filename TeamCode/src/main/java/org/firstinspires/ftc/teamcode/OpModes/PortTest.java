@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,9 +14,9 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Template", group="Iterative Opmode")
-@Disabled
-public class Template extends OpMode {
+@TeleOp(name="PortTest", group="Iterative Opmode")
+//@Disabled
+public class PortTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -29,6 +28,7 @@ public class Template extends OpMode {
     private DcMotor rightBack;
     private DcMotor horizontal_extender;
     private DcMotor vertical_extender;
+    private DcMotor enc_left;
 
     private Servo collector_arm;
     private Servo foundation_mover;
@@ -55,6 +55,7 @@ public class Template extends OpMode {
         rightBack           = hardwareMap.get(DcMotor.class, "right_back");
         horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
+        enc_left   = hardwareMap.get(DcMotor.class, "enc_left");
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
@@ -77,7 +78,7 @@ public class Template extends OpMode {
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
+        rowboat = new Robot_Localizer(enc_left,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
@@ -91,7 +92,6 @@ public class Template extends OpMode {
      */
     @Override
     public void init_loop() {
-
     }
 
     /*

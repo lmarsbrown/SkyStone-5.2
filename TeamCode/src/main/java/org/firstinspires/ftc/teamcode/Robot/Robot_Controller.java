@@ -133,9 +133,13 @@ public class Robot_Controller {
 
     public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, Lambda callback)
     {
+        Interval callbackThread = new Interval((Object obj)->{
+            callback.call(new Object());
+            return 1;
+        },1);
         robot.onLocalize = (q)->{
             double count = gotoPointLoop(point,near,end,minSpeed);
-            if(count>50||(count>3&&!end)){robot.onLocalize = null;callback.call(new Object());}
+            if(count>50||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };
     }
