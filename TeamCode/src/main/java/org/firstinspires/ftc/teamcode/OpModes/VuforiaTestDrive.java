@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,9 +18,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Interval;
-import org.firstinspires.ftc.teamcode.Utils.Lambda;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 import org.firstinspires.ftc.teamcode.Utils.VuLambda;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @TeleOp(name="VuforiaTestDrive", group="Iterative Opmode")
@@ -36,6 +38,7 @@ public class VuforiaTestDrive extends OpMode {
     private Robot_Controller control;
 
     private Interval inter;
+    private Interval inter2;
 
     private DcMotor leftFront;
     private DcMotor rightFront;
@@ -87,7 +90,7 @@ public class VuforiaTestDrive extends OpMode {
         //Seting vuforia params
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AXD7Z8n/////AAABmeUpWxkr4UwCn1T5SeLkoYsYLhZbVtkUUiH3anbbVLB6LppfJSGm+AVOaffZudIRjtBpgZG1MjRa4sz1YZPRUf/Tv9x0HQrm2+GfkHn2fi/Zu1GRH873rFjxnFnUIOar2q48nPytFs6n4/P4tkUMwBSmlffeJxcxhBSMnFgH5AXrTL7F+WAerdDGlFVGlHJgnbkMJWyFwsSrhkSm2TD2vnsiZ2PdnKhUPL3FLxHPTUh+b39PTlmW4Yzws1jDA+Xfp4lvn+E7p4g+fY/eAA3gzcRQP4XyhBYjACJaXOtatxclSNxBU5xyGN+L1cM5hQ/6d5UJBYQeQdV5GFzv0hd5xEYMCKcZplda+0y1f6+QG2Z6";
-        parameters.cameraName = webcamName;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         parameters.addWebcamCalibrationFile("Calibration");
 
 
@@ -96,6 +99,7 @@ public class VuforiaTestDrive extends OpMode {
         skystoneTrackables = this.vuforia.loadTrackablesFromAsset("Skystone");
         targetElement = skystoneTrackables.get(0);
         targetElement.setName("targetElement");
+
 
 
     }
@@ -114,12 +118,13 @@ public class VuforiaTestDrive extends OpMode {
     public void start() {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
-        control.gotoPoint(new Transform(0,-320,0),true,true,0.25,(Object obj)->{
+
+        control.gotoPoint(new Transform(0,-300,0),true,true,0.2,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
                     telemetry.addData("test",pose);
                     telemetry.update();
-                    control.gotoPoint(new Transform(-180-pose.getRow(0).get(3),this.rowboat.pos.y-pose.getRow(2).get(3)+200,0),true,true,0.2,(Object o)->{
+                    control.gotoPoint(new Transform( -140-pose.getRow(1).get(3),-370+pose.getRow(0).get(3)+this.rowboat.pos.y-100,0),true,true,0.25,(Object o)->{
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
                         outer_collector.setPower(-0.7);
@@ -161,9 +166,14 @@ public class VuforiaTestDrive extends OpMode {
     @Override
     public void stop() {
         if(inter != null) inter.clear();
+        if(inter2 != null) inter2.clear();
     }
     private VuforiaTrackableDefaultListener getBlock(VuforiaTrackable trackable)
     {
+        inter2 = new Interval((Object ok)->{
+            return 0;
+        },2000);
+        inter2.start();
         if(trackable != null)
 
         {
@@ -175,19 +185,27 @@ public class VuforiaTestDrive extends OpMode {
         }
         return null;
     }
+
     private void detect(VuforiaTrackable trackable, VuLambda callback)
     {
+        CameraDevice.getInstance().setFlashTorchMode(true);
+        double start = runtime.milliseconds();
+        AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
+            if((runtime.milliseconds()-start)%2000<100 && !stapd.get())
+            {
+                stapd.set(true);
+                control.gotoPoint(new Transform(rowboat.pos.x+150,rowboat.pos.x,0),true,true,0.2,(Object yyyyyyhelpnoureversecard)->{return 0;});
+            }
+            else if((runtime.milliseconds()-start)%2000>100)
+            {
+                stapd.set(false);
+            }
             block = getBlock(targetElement);
-            if(block.isVisible()){callback.call(block);return 1;}
+            if(block.isVisible()){ CameraDevice.getInstance().setFlashTorchMode(false);callback.call(block);return 1;}
             return 0;
 
         },500);
-        telemetry.addData("test","test");
-        telemetry.update();
-        inter.start();
-        telemetry.addData("test2","test2");
-        telemetry.update();
     }
 
 }

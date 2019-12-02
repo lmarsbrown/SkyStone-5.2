@@ -134,7 +134,7 @@ public class RobotCentric extends OpMode {
             horizontal_extender.setPower(gp2_percent_pwr * 0.5);
         else horizontal_extender.setPower(0);
 
-        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.25);
+        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.5);
         else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
         else                               vertical_extender.setPower(0);
 

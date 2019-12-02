@@ -62,10 +62,14 @@ public class Robot_Localizer {
         try {
             onLocalize.call(new Object());
         }
-        catch(Exception err)
+        catch(Throwable err)
         {
 
         }
+    }
+
+    public Lambda getOnLocalize() {
+        return onLocalize;
     }
 
     //All the calibration functions

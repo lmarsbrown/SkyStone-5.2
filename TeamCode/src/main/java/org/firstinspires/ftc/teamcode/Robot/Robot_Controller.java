@@ -139,7 +139,7 @@ public class Robot_Controller {
         },1);
         robot.onLocalize = (q)->{
             double count = gotoPointLoop(point,near,end,minSpeed);
-            if(count>50||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
+            if(count>10||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };
     }

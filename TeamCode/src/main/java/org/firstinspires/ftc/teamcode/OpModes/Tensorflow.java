@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.os.Build;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,8 +18,12 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
+import org.firstinspires.ftc.teamcode.Utils.Interval;
+import org.firstinspires.ftc.teamcode.Utils.Lambda;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -56,6 +62,7 @@ public class Tensorflow extends OpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
+    private Interval inter;
 
     private static final String VUFORIA_KEY =
             "AXD7Z8n/////AAABmeUpWxkr4UwCn1T5SeLkoYsYLhZbVtkUUiH3anbbVLB6LppfJSGm+AVOaffZudIRjtBpgZG1MjRa4sz1YZPRUf/Tv9x0HQrm2+GfkHn2fi/Zu1GRH873rFjxnFnUIOar2q48nPytFs6n4/P4tkUMwBSmlffeJxcxhBSMnFgH5AXrTL7F+WAerdDGlFVGlHJgnbkMJWyFwsSrhkSm2TD2vnsiZ2PdnKhUPL3FLxHPTUh+b39PTlmW4Yzws1jDA+Xfp4lvn+E7p4g+fY/eAA3gzcRQP4XyhBYjACJaXOtatxclSNxBU5xyGN+L1cM5hQ/6d5UJBYQeQdV5GFzv0hd5xEYMCKcZplda+0y1f6+QG2Z6";
@@ -143,6 +150,12 @@ public class Tensorflow extends OpMode {
      */
     @Override
     public void start() {
+        detect((Object pos)->{
+            telemetry.addData("out",pos);
+            telemetry.update();
+
+            return 0;
+        });
         runtime.reset();
     }
 
@@ -152,14 +165,12 @@ public class Tensorflow extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
 
-        telemetry.addData("x",rowboat.pos.x);
+        /*telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",rowboat.pos.r);
-        telemetry.addData("stones",updatedRecognitions.size());
-        telemetry.update();
+        telemetry.update();*/
     }
 
     /*
@@ -167,6 +178,49 @@ public class Tensorflow extends OpMode {
      */
     @Override
     public void stop() {
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+    }
+    public void detect(Lambda callback)
+    {
+        int out;
+        inter = new Interval((Object obj)->{
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if(updatedRecognitions != null)
+            {
+                if(updatedRecognitions.size()>=2)
+                {
+                    Comparator<Recognition> comparator = (e1, e2) -> Math.round(e2.getLeft()-e1.getLeft());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        updatedRecognitions.sort(comparator);
+                    }
+                    else
+                    {
+                        try {
+                            throw(new Throwable("REEEEEEEEEEEE"));
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    }
+                    String l1 = updatedRecognitions.get(0).getLabel();
+
+                    String l2 = updatedRecognitions.get(1).getLabel();
+
+                    if(l1=="Stone")
+                    {
+                        if(l2 == "Stone"){callback.call(2);return  1;}
+                        else {callback.call(1);return  1;}
+                    }
+                    else {callback.call(0);return  1;}
+                }
+
+            }
+
+
+            return 0;
+        },250);
+        inter.start();
     }
 
 }
