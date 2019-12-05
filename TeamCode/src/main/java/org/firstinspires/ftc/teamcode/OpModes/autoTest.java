@@ -63,10 +63,8 @@ public class autoTest extends OpMode {
      */
     @Override
     public void start() {
-        control.gotoPoint(new Transform(0,-2000,0),false,false,0.3,(Object obj)->{
-            control.gotoPoint(new Transform(1000,-2000,0),true,true,0.3,(Object obj2)->{
-                return 0;
-            });
+        control.gotoPoint(new Transform(500,-2000,0),false,true,0.3,0.00003,(Object obj)->{
+
             return 0;
         });
         runtime.reset();

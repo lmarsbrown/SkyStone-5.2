@@ -119,12 +119,10 @@ public class VuforiaTestDrive extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(0,-300,0),true,true,0.2,(Object obj)->{
+        control.gotoPoint(new Transform(0,-300,0),true,true,0.2,0.00003,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    telemetry.addData("test",pose);
-                    telemetry.update();
-                    control.gotoPoint(new Transform( -140-pose.getRow(1).get(3),-370+pose.getRow(0).get(3)+this.rowboat.pos.y-100,0),true,true,0.25,(Object o)->{
+                    control.gotoPoint(new Transform( rowboat.pos.x-120-pose.getRow(1).get(3),-470+pose.getRow(0).get(3)+this.rowboat.pos.y,0),true,true,0.25,0.000008,(Object o)->{
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
                         outer_collector.setPower(-0.7);
@@ -137,6 +135,13 @@ public class VuforiaTestDrive extends OpMode {
                         inner_collector.setPower(0);
                         outer_collector.setPower(0);
 
+                         control.gotoPoint(new Transform( rowboat.pos.x,-630,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
+                             control.gotoPoint(new Transform( -2000,rowboat.pos.y,0),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
+
+                                 return  0;
+                             });
+                             return  0;
+                         });
                         return 0;
                     });
                     //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
@@ -192,10 +197,11 @@ public class VuforiaTestDrive extends OpMode {
         double start = runtime.milliseconds();
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
+            telemetry.addData("",stapd.get());
             if((runtime.milliseconds()-start)%2000<100 && !stapd.get())
             {
                 stapd.set(true);
-                control.gotoPoint(new Transform(rowboat.pos.x+150,rowboat.pos.x,0),true,true,0.2,(Object yyyyyyhelpnoureversecard)->{return 0;});
+                control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.2,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
             else if((runtime.milliseconds()-start)%2000>100)
             {
@@ -206,6 +212,7 @@ public class VuforiaTestDrive extends OpMode {
             return 0;
 
         },500);
+        inter.start();
     }
 
 }

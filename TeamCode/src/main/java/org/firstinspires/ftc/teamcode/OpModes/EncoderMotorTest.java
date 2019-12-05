@@ -106,7 +106,6 @@ public class EncoderMotorTest extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-
         telemetry.addData("ENCODER", vertical_extender.getCurrentPosition());
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);

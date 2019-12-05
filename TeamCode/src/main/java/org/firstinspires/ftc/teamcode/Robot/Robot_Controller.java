@@ -20,6 +20,7 @@ public class Robot_Controller {
     private Transform pMovement = new Transform(0,0,0);
     public Interval inter;
     private double doneCount = 0;
+    public boolean stat = false;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -68,26 +69,27 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
-    public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed)
+    public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed, double slowConst)
         {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
-        double fPower = 1-((1-minSpeed)/(0.00003*goalDist*goalDist+1));
+        double fPower = 1-((1-minSpeed)/(slowConst*goalDist*goalDist+1));
         telem = fPower+"";
-        double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI*2))%-(Math.PI*2))));
+        double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
         double rPower = 0;
 
         if(!near)rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
         dir.r = rPower;
 
-        if(goalDist<10||(goalDist<60&&!end||(goalDist<60&&!end)))
+        if((goalDist<10||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
         {
-            double turnToOffset = (point.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
+            stat = true;
+            double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
             if(Math.abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
-            else setVec(new Transform(0,0,0),0);doneCount++;return doneCount;
+            else {doneCount++;stat = false;return doneCount;}
         }
         else
         {
@@ -131,14 +133,14 @@ public class Robot_Controller {
 
     }*/
 
-    public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, Lambda callback)
+    public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, double slowConst, Lambda callback)
     {
         Interval callbackThread = new Interval((Object obj)->{
             callback.call(new Object());
             return 1;
         },1);
         robot.onLocalize = (q)->{
-            double count = gotoPointLoop(point,near,end,minSpeed);
+            double count = gotoPointLoop(point,near,end,minSpeed,slowConst);
             if(count>10||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };
