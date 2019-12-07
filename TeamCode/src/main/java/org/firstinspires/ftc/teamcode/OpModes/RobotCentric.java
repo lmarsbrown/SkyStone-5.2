@@ -161,7 +161,7 @@ public class RobotCentric extends OpMode {
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
         telemetry.addData("Rotation", rowboat.pos.r);
-        telemetry.addData("ummidnotknow", control.stat);
+        telemetry.addData("ummidnotknow", control.telem);
         telemetry.update();
     }
 

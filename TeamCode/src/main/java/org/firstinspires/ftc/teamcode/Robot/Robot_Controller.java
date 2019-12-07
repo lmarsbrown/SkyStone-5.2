@@ -22,6 +22,10 @@ public class Robot_Controller {
     private double doneCount = 0;
     public boolean stat = false;
 
+    //Too fast far Too slow close
+    private PIDController dPID = new PIDController(-0.004,0.0009,0.006,0);
+    private PIDController rPID = new PIDController(1,0.05,0.3,0);
+
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
         this.rfm = rfm;
@@ -69,14 +73,16 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
+
     public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed, double slowConst)
         {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
-        double fPower = 1-((1-minSpeed)/(slowConst*goalDist*goalDist+1));
+        double fPower = Math.min(dPID.update(goalDist), 1);
         telem = fPower+"";
+
         double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
         double rPower = 0;
 
@@ -85,9 +91,10 @@ public class Robot_Controller {
 
         if((goalDist<10||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
         {
+            if(!stat)rPID.reset(0);
             stat = true;
             double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
-            double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
+            double turnToMulti = -rPID.update(turnToOffset);
             if(Math.abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
             else {doneCount++;stat = false;return doneCount;}
         }

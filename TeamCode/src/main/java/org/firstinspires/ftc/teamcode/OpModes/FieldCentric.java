@@ -95,61 +95,75 @@ public class FieldCentric extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        robot_vector = new Transform(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
+        robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        if(gamepad1.left_bumper) gp1_percent_pwr = 0.25;
-        else if (gamepad1.right_bumper) gp1_percent_pwr = 0.6;
+        if (gamepad1.left_bumper) gp1_percent_pwr = 0.25;
+        else if (gamepad1.right_bumper) gp1_percent_pwr = 0.4;
         else gp1_percent_pwr = 1;
 
-        if(gamepad2.left_trigger > 0.8) gp2_percent_pwr = 0.25;
-        else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.6;
+        if (gamepad2.left_trigger > 0.8) gp2_percent_pwr = 0.25;
+        else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.4;
         else gp2_percent_pwr = 1;
 
-        if(gamepad1.y){
+        if (gamepad1.y) {
             saved_robot_pos = rowboat.pos.clone();
-            saved_robot_pos.r = (saved_robot_pos.r%(2*Math.PI))%-(2*Math.PI);
+            saved_robot_pos.r = (saved_robot_pos.r % (2 * Math.PI)) % -(2 * Math.PI);
         }
 
-        if(gamepad1.x && saved_robot_pos != null && !going_to_pt)
-        {
+        if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, true, true,0.2,0.00003, (Object obj)->{going_to_pt = false; return 0;});
+            control.gotoPoint(saved_robot_pos, false, true, 0.3,0.00003, (Object obj) -> {
+                going_to_pt = false;
+                return 0;
+            });
         }
 
-        if(gamepad1.a) foundation_mover.setPosition(0.57);
-        if(gamepad1.b) foundation_mover.setPosition(0);
+        if (gamepad1.a) foundation_mover.setPosition(0.57);
+        if (gamepad1.b) foundation_mover.setPosition(0);
 
-        if(gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
+        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
             control.clearGoto();
         }
 
         robot_vector.rotate(new Transform(0, 0, 0), -rowboat.pos.r);
 
-        if(!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
+        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
 
-        if(gamepad2.dpad_down && limit_switch_front.getState())   horizontal_extender.setPower(-gp2_percent_pwr);
-        else if(gamepad2.dpad_up && limit_switch_back.getState()) horizontal_extender.setPower( gp2_percent_pwr);
-        else                                                      horizontal_extender.setPower(0);
+        if (gamepad2.dpad_down && limit_switch_front.getState())
+            horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
+        else if (gamepad2.dpad_up && limit_switch_back.getState())
+            horizontal_extender.setPower(gp2_percent_pwr * 0.5);
+        else horizontal_extender.setPower(0);
 
-        vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
+        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.5);
+        else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
+        else                               vertical_extender.setPower(0);
 
-        if(gamepad2.a) {
+        if(gamepad2.right_stick_y > 0.1) {
             collector_arm.setPosition(0.403);
-            inner_collector.setPower(-gp2_percent_pwr);
-            outer_collector.setPower(-gp2_percent_pwr);
-        } else if(gamepad2.y) {
+            inner_collector.setPower(-gamepad2.right_stick_y);
+            outer_collector.setPower(-gamepad2.right_stick_y);
+        } else if(gamepad2.right_stick_y < -0.1) {
             collector_arm.setPosition(0.72);
-            inner_collector.setPower(gp2_percent_pwr);
-            outer_collector.setPower(gp2_percent_pwr);
+            inner_collector.setPower(-gamepad2.right_stick_y);
+            outer_collector.setPower(-gamepad2.right_stick_y);
         } else {
             inner_collector.setPower(0);
             outer_collector.setPower(0);
         }
 
+        if(saved_robot_pos != null)
+        {
+            telemetry.addData("X Position II", saved_robot_pos.x);
+            telemetry.addData("Y Position II", saved_robot_pos.y);
+            telemetry.addData("Rotation II", saved_robot_pos.r);
+
+        }
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
         telemetry.addData("Rotation", rowboat.pos.r);
+        telemetry.addData("ummidnotknow", control.stat);
         telemetry.update();
     }
 
