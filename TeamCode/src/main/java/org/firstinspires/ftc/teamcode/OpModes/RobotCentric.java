@@ -128,9 +128,9 @@ public class RobotCentric extends OpMode {
 
         if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
 
-        if (gamepad2.dpad_down && limit_switch_front.getState())
+        if (gamepad2.dpad_down /* && limit_switch_front.getState() */)
             horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
-        else if (gamepad2.dpad_up && limit_switch_back.getState())
+        else if (gamepad2.dpad_up /* && limit_switch_back.getState() */)
             horizontal_extender.setPower(gp2_percent_pwr * 0.5);
         else horizontal_extender.setPower(0);
 

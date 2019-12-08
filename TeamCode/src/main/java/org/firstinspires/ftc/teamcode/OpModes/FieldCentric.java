@@ -130,9 +130,9 @@ public class FieldCentric extends OpMode {
 
         if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
 
-        if (gamepad2.dpad_down && limit_switch_front.getState())
+        if (gamepad2.dpad_down /* && limit_switch_front.getState() */)
             horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
-        else if (gamepad2.dpad_up && limit_switch_back.getState())
+        else if (gamepad2.dpad_up /* && limit_switch_back.getState() */)
             horizontal_extender.setPower(gp2_percent_pwr * 0.5);
         else horizontal_extender.setPower(0);
 
@@ -140,14 +140,14 @@ public class FieldCentric extends OpMode {
         else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
         else                               vertical_extender.setPower(0);
 
-        if(gamepad2.right_stick_y > 0.1) {
-            collector_arm.setPosition(0.403);
-            inner_collector.setPower(-gamepad2.right_stick_y);
-            outer_collector.setPower(-gamepad2.right_stick_y);
-        } else if(gamepad2.right_stick_y < -0.1) {
+        if(gamepad2.y) {
             collector_arm.setPosition(0.72);
-            inner_collector.setPower(-gamepad2.right_stick_y);
-            outer_collector.setPower(-gamepad2.right_stick_y);
+            inner_collector.setPower(1);
+            outer_collector.setPower(1);
+        } else if(gamepad2.a) {
+            collector_arm.setPosition(0.403);
+            inner_collector.setPower(-1);
+            outer_collector.setPower(-1);
         } else {
             inner_collector.setPower(0);
             outer_collector.setPower(0);
