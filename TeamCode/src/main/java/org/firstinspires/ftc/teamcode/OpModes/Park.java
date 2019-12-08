@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,13 +9,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.*;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Robot-Centric Driving", group="Iterative Opmode")
+@TeleOp(name="Template", group="Iterative Opmode")
 //@Disabled
-public class RobotCentric extends OpMode {
+public class Park extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -83,89 +85,41 @@ public class RobotCentric extends OpMode {
         foundation_mover.setPosition(0);
     }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
     @Override
     public void init_loop() {
+
     }
 
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
     @Override
     public void start() {
+        control.gotoPoint(new Transform(10,500,0),true,true,0.25,0.000035,(Object obj)->0);
         runtime.reset();
     }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
     @Override
     public void loop() {
         rowboat.relocalize();
-        robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        if (gamepad1.left_bumper) gp1_percent_pwr = 0.25;
-        else if (gamepad1.right_bumper) gp1_percent_pwr = 0.4;
-        else gp1_percent_pwr = 1;
-
-        if (gamepad2.left_trigger > 0.8) gp2_percent_pwr = 0.25;
-        else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.4;
-        else gp2_percent_pwr = 1;
-
-        if (gamepad1.y) {
-            saved_robot_pos = rowboat.pos.clone();
-            saved_robot_pos.r = (saved_robot_pos.r % (2 * Math.PI)) % -(2 * Math.PI);
-        }
-
-        if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
-            going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, true, 0.25,0.00004, (Object obj) -> {
-                going_to_pt = false;
-                return 0;
-            });
-        }
-
-        if (gamepad1.a) foundation_mover.setPosition(0.57);
-        if (gamepad1.b) foundation_mover.setPosition(0);
-
-        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
-            going_to_pt = false;
-            control.clearGoto();
-        }
-
-        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
-
-        if (gamepad2.dpad_down /* && limit_switch_front.getState() */)
-            horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
-        else if (gamepad2.dpad_up /* && limit_switch_back.getState() */)
-            horizontal_extender.setPower(gp2_percent_pwr * 0.5);
-        else horizontal_extender.setPower(0);
-
-        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.5);
-        else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
-        else                               vertical_extender.setPower(0);
-
-        if(gamepad2.right_stick_y > 0.1) {
-            collector_arm.setPosition(0.403);
-            inner_collector.setPower(-gamepad2.right_stick_y);
-            outer_collector.setPower(-gamepad2.right_stick_y);
-        } else if(gamepad2.right_stick_y < -0.1) {
-            collector_arm.setPosition(0.72);
-            inner_collector.setPower(-gamepad2.right_stick_y);
-            outer_collector.setPower(-gamepad2.right_stick_y);
-        } else {
-            inner_collector.setPower(0);
-            outer_collector.setPower(0);
-        }
-
-        if(saved_robot_pos != null)
-        {
-            telemetry.addData("X Position II", saved_robot_pos.x);
-            telemetry.addData("Y Position II", saved_robot_pos.y);
-            telemetry.addData("Rotation II", saved_robot_pos.r);
-
-        }
-        telemetry.addData("X Position", rowboat.pos.x);
-        telemetry.addData("Y Position", rowboat.pos.y);
-        telemetry.addData("Rotation", rowboat.pos.r);
-        telemetry.addData("ummidnotknow", control.telem);
+        telemetry.addData("x",rowboat.pos.x);
+        telemetry.addData("y",rowboat.pos.y);
+        telemetry.addData("r",rowboat.pos.r);
         telemetry.update();
     }
 
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
     @Override
     public void stop() {
     }
+
 }
