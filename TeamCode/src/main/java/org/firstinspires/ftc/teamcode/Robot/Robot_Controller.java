@@ -22,6 +22,7 @@ public class Robot_Controller {
     private double doneCount = 0;
     public boolean stat = false;
     private PIDController rPid = new PIDController(0.6,0.1,0.13,0);
+    private PIDController mPid = new PIDController(0.015,0,0.025,0);
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -76,15 +77,15 @@ public class Robot_Controller {
         dir.normalize();
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
-        double fPower = 1-((1-minSpeed)/(slowConst*goalDist*goalDist+1));
+        double fPower = -mPid.update(goalDist);
         telem = fPower+"";
-        double rOffset = ((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
+        double rOffset = Math.PI+((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
         double rPower = 0;
 
         if(!near)rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
-        dir.r = rPower;
+        //dir.r = rPower;
 
-        if((goalDist<10||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
+        if((goalDist<20||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
         {
             stat = true;
             double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
@@ -104,7 +105,7 @@ public class Robot_Controller {
     public void followPathLoop(Vector<Transform> path, double lookahead)
     {
         Transform cPoint = path.get(0);
-        Transform nPoint = path.get(1);
+        Transform nPoint = path.get(1);+
         int index = 0;
         boolean ending = false;
         if(cPoint.getSetOrigin(robot.pos,false).getLength()<10)
@@ -132,6 +133,7 @@ public class Robot_Controller {
 
     public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, double slowConst, Lambda callback)
     {
+        mPid.reset(0);
         rPid.reset(0);
         Interval callbackThread = new Interval((Object obj)->{
             callback.call(new Object());
