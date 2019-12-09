@@ -21,8 +21,8 @@ public class Robot_Controller {
     public Interval inter;
     private double doneCount = 0;
     public boolean stat = false;
-    private PIDController rPid = new PIDController(0.6,0.1,0.13,0);
-    private PIDController mPid = new PIDController(0.015,0,0.025,0);
+    private PIDController rPid = new PIDController(0.65,0.13,0.18,0);
+    private PIDController mPid = new PIDController(0.023,0,0.1,0);
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -52,7 +52,6 @@ public class Robot_Controller {
         stableOffset.y = (dir.y = steps.y*1)+(stableOffset.y*0.0);
         stableOffset.r = dir.r - (steps.r*0.1);
         stableOffset.normalize();
-        telem = steps.x+" "+steps.y;
 
         dir.x += stableOffset.x;
         dir.y += stableOffset.y;
@@ -61,6 +60,7 @@ public class Robot_Controller {
         else
         {
             double turnToOffset = (dir.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
+            telem = turnToOffset+"";
             double turnToMulti = (1-(0.5/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
             if(Math.abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
         }
@@ -71,6 +71,7 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
+    //  TODO: Add turn and forward
     public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed, double slowConst)
     {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
@@ -78,25 +79,25 @@ public class Robot_Controller {
         dir.rotate(new Transform(0,0,0),-robot.pos.r);
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
         double fPower = -mPid.update(goalDist);
-        telem = fPower+"";
         double rOffset = Math.PI+((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
         double rPower = 0;
 
-        if(!near)rPower = ((1-(1/(1+0.5*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
-        //dir.r = rPower;
+        if(!near)rPower = ((1-(1/(1+0.2*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
+        dir.r = 0;
 
-        if((goalDist<20||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
+        if((goalDist<30||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
         {
             stat = true;
             double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
+            telem = turnToOffset+"";
             //double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
             double turnToMulti = -rPid.update(turnToOffset);
             if(Math.abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
-            else {doneCount++;stat = false;return doneCount;}
+            else {setVec(new Transform(0,0,0),0);doneCount++;stat = false;return doneCount;}
         }
         else
         {
-            setVec(dir,fPower);
+            setVec(dir,Math.min(fPower,0.7));
         }
         doneCount = 0;
         return doneCount;

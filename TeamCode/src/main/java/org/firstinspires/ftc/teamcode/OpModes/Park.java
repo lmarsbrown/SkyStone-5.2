@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Template", group="Iterative Opmode")
+@TeleOp(name="park", group="Iterative Opmode")
 //@Disabled
 public class Park extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -45,6 +45,9 @@ public class Park extends OpMode {
 
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
+
+
+    boolean run = false;
 
     @Override
     public void init() {
@@ -98,9 +101,8 @@ public class Park extends OpMode {
      */
     @Override
     public void start() {
-        control.gotoPoint(new Transform(10,500,0),true,true,0.25,0.000035,(Object obj)->0);
         runtime.reset();
-    }
+}
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -109,9 +111,18 @@ public class Park extends OpMode {
     public void loop() {
         rowboat.relocalize();
 
+        if(!run)
+        {
+            run = true;
+            control.gotoPoint(new Transform(10,750,0), false, true, 0.25,0.00004, (Object obj) -> {
+                return 0;
+            });
+        }
+
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",rowboat.pos.r);
+        telemetry.addData("telem",control.telem);
         telemetry.update();
     }
 
@@ -120,6 +131,7 @@ public class Park extends OpMode {
      */
     @Override
     public void stop() {
+        control.clearGoto();
     }
 
 }

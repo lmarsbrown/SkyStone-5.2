@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Utils.VuLambda;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-@TeleOp(name="VuforiaTestDrive", group="Iterative Opmode")
+@Autonomous(name="VuforiaTestDrive", group="Iterative Opmode")
 //@Disabled
 public class VuforiaTestDrive extends OpMode {
     // Declare OpMode members.
@@ -99,6 +100,8 @@ public class VuforiaTestDrive extends OpMode {
         skystoneTrackables = this.vuforia.loadTrackablesFromAsset("Skystone");
         targetElement = skystoneTrackables.get(0);
         targetElement.setName("targetElement");
+        //Move collector_arm up
+        collector_arm.setPosition(0.76);
 
 
 
@@ -122,7 +125,7 @@ public class VuforiaTestDrive extends OpMode {
         control.gotoPoint(new Transform(0,-300,0),true,true,0.2,0.00003,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    control.gotoPoint(new Transform( rowboat.pos.x-120-pose.getRow(1).get(3),-470+pose.getRow(0).get(3)+this.rowboat.pos.y,0),true,true,0.25,0.000008,(Object o)->{
+                    control.gotoPoint(new Transform( rowboat.pos.x-200-pose.getRow(1).get(3),-pose.getRow(0).get(3)+this.rowboat.pos.y,0),true,true,0.25,0.000008,(Object o)->{
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
                         outer_collector.setPower(-0.7);
@@ -135,8 +138,10 @@ public class VuforiaTestDrive extends OpMode {
                         inner_collector.setPower(0);
                         outer_collector.setPower(0);
 
-                         control.gotoPoint(new Transform( rowboat.pos.x,-630,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
-                             control.gotoPoint(new Transform( -2000,rowboat.pos.y,0),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
+                         control.gotoPoint(new Transform( rowboat.pos.x,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
+                             control.gotoPoint(new Transform( -1240,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
+                                 collector_arm.setPosition(0.72);
+                                 control.gotoPoint(new Transform( 0,-650,0),true,true,0.2,0.00003,(Object sgerhgseg)->0);
 
                                  return  0;
                              });
@@ -198,7 +203,7 @@ public class VuforiaTestDrive extends OpMode {
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
             telemetry.addData("",stapd.get());
-            if((runtime.milliseconds()-start)%2000<100 && !stapd.get())
+            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>100)
             {
                 stapd.set(true);
                 control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.2,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
