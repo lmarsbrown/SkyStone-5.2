@@ -101,7 +101,7 @@ public class VuforiaTestDrive extends OpMode {
         targetElement = skystoneTrackables.get(0);
         targetElement.setName("targetElement");
         //Move collector_arm up
-        collector_arm.setPosition(0.76);
+        collector_arm.setPosition(0.77);
 
 
 
@@ -125,7 +125,8 @@ public class VuforiaTestDrive extends OpMode {
         control.gotoPoint(new Transform(0,-300,0),true,true,0.2,0.00003,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    control.gotoPoint(new Transform( rowboat.pos.x-200-pose.getRow(1).get(3),-pose.getRow(0).get(3)+this.rowboat.pos.y,0),true,true,0.25,0.000008,(Object o)->{
+                    Transform stoneAPos = new Transform( rowboat.pos.x-200-pose.getRow(1).get(3),-600-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
+                    control.gotoPoint(stoneAPos,true,true,0.25,0.000008,(Object o)->{
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
                         outer_collector.setPower(-0.7);
@@ -141,7 +142,7 @@ public class VuforiaTestDrive extends OpMode {
                          control.gotoPoint(new Transform( rowboat.pos.x,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
                              control.gotoPoint(new Transform( -1240,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
                                  collector_arm.setPosition(0.72);
-                                 control.gotoPoint(new Transform( 0,-650,0),true,true,0.2,0.00003,(Object sgerhgseg)->0);
+                                 control.gotoPoint(new Transform( stoneAPos.x+410,-650,0),true,true,0.2,0.00003,(Object sgerhgseg)->0);
 
                                  return  0;
                              });
