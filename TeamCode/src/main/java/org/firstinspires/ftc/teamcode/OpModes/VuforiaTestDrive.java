@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraDevice;
@@ -51,6 +52,7 @@ public class VuforiaTestDrive extends OpMode {
 
     private CRServo outer_collector;
     private CRServo inner_collector;
+    private DcMotor horizontal_extender;
 
     private VuforiaLocalizer vuforia;
 
@@ -60,6 +62,9 @@ public class VuforiaTestDrive extends OpMode {
     private VuforiaTrackable targetElement;
 
     private VuforiaTrackableDefaultListener block;
+
+    private DigitalChannel limit_switch_front;
+    private DigitalChannel limit_switch_back;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -75,6 +80,10 @@ public class VuforiaTestDrive extends OpMode {
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
+        horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
+
+        limit_switch_back   = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        limit_switch_front  = hardwareMap.get(DigitalChannel.class, "limit_switch2");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -122,10 +131,10 @@ public class VuforiaTestDrive extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(0,-300,0),true,true,0.2,0.00003,(Object obj)->{
+        control.gotoPoint(new Transform(-230,-300,0),true,true,0.2,0.00003,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    Transform stoneAPos = new Transform( rowboat.pos.x-200-pose.getRow(1).get(3),-600-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
+                    Transform stoneAPos = new Transform( rowboat.pos.x+200-pose.getRow(1).get(3),-300-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
                     control.gotoPoint(stoneAPos,true,true,0.25,0.000008,(Object o)->{
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
@@ -140,9 +149,9 @@ public class VuforiaTestDrive extends OpMode {
                         outer_collector.setPower(0);
 
                          control.gotoPoint(new Transform( rowboat.pos.x,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
-                             control.gotoPoint(new Transform( -1240,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
+                             control.gotoPoint(new Transform( -1111,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
                                  collector_arm.setPosition(0.72);
-                                 control.gotoPoint(new Transform( stoneAPos.x+410,-650,0),true,true,0.2,0.00003,(Object sgerhgseg)->0);
+                                 control.gotoPoint(new Transform( -700,-650,-Math.PI*0.5),true,false,0.2,0.00003,(Object sgerhgseg)->0);
 
                                  return  0;
                              });
@@ -155,7 +164,7 @@ public class VuforiaTestDrive extends OpMode {
                 });
                 return 0;
         });
-
+        horizontal_extender.setPower(0.4);
         runtime.reset();
     }
 
@@ -164,6 +173,9 @@ public class VuforiaTestDrive extends OpMode {
      */
     @Override
     public void loop() {
+
+        if(!limit_switch_back.getState())horizontal_extender.setPower(0);
+
         rowboat.relocalize();
         /*OpenGLMatrix pose = getBlock(targetElement).getFtcCameraFromTarget();
         if(pose != null)telemetry.addData("x",pose.getRow(0).get(3));
@@ -204,7 +216,7 @@ public class VuforiaTestDrive extends OpMode {
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
             telemetry.addData("",stapd.get());
-            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>100)
+            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
                 control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.2,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
