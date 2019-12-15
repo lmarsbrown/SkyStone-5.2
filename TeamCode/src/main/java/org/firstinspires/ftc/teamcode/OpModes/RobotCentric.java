@@ -29,6 +29,7 @@ public class RobotCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
+    private Servo capstone_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -55,6 +56,7 @@ public class RobotCentric extends OpMode {
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+        capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -79,8 +81,9 @@ public class RobotCentric extends OpMode {
 
         going_to_pt = false;
 
-        collector_arm.setPosition(0.403);
+        collector_arm.setPosition(0.72);
         foundation_mover.setPosition(0);
+        capstone_arm.setPosition(1);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, true, 0.25,0.00004, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, false, true, 0.7,0.00003, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });
@@ -151,17 +154,19 @@ public class RobotCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        if(saved_robot_pos != null)
-        {
-            telemetry.addData("X Position II", saved_robot_pos.x);
-            telemetry.addData("Y Position II", saved_robot_pos.y);
-            telemetry.addData("Rotation II", saved_robot_pos.r);
+        if(gamepad2.b) capstone_arm.setPosition(0.5);
 
-        }
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
         telemetry.addData("Rotation", rowboat.pos.r);
-        telemetry.addData("ummidnotknow", control.telem);
+        if(saved_robot_pos != null)
+        {
+            telemetry.addLine();
+            telemetry.addData("Saved X Position", saved_robot_pos.x);
+            telemetry.addData("Saved Y Position", saved_robot_pos.y);
+            telemetry.addData("Saved Rotation", saved_robot_pos.r);
+
+        }
         telemetry.update();
     }
 

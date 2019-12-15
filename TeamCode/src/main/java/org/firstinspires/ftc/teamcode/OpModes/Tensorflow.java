@@ -28,7 +28,7 @@ import java.util.List;
 
 
 @TeleOp(name="tesorflow", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Tensorflow extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

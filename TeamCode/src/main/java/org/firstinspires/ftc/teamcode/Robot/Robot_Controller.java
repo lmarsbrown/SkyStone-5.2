@@ -71,8 +71,9 @@ public class Robot_Controller {
         pMovement = dir;
         setVec(dir,power);
     }
-    //  TODO: Add turn and forward
-    public double gotoPointLoop(Transform point, boolean near,boolean end, double minSpeed, double slowConst)
+    //  TODO: Add turn + forward
+    // TODO: Make speed and slop into params
+    public double gotoPointLoop(Transform point, boolean near,boolean end, double maxSpeed, double slowConst)
     {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
@@ -97,7 +98,7 @@ public class Robot_Controller {
         }
         else
         {
-            setVec(dir,Math.min(fPower,0.7));
+            setVec(dir,Math.min(fPower,maxSpeed));
         }
         doneCount = 0;
         return doneCount;
@@ -132,7 +133,7 @@ public class Robot_Controller {
         }
     }*/
 
-    public void gotoPoint(Transform point,boolean near, boolean end,double minSpeed, double slowConst, Lambda callback)
+    public void gotoPoint(Transform point,boolean near, boolean end,double maxSpeed, double slowConst, Lambda callback)
     {
         mPid.reset(0);
         rPid.reset(0);
@@ -141,7 +142,7 @@ public class Robot_Controller {
             return 1;
         },1);
         robot.onLocalize = (q)->{
-            double count = gotoPointLoop(point,near,end,minSpeed,slowConst);
+            double count = gotoPointLoop(point,near,end,maxSpeed,slowConst);
             if(count>10||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };

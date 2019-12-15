@@ -82,7 +82,16 @@ public class Template extends OpMode {
 
         going_to_pt = false;
 
-        collector_arm.setPosition(0.403);
+
+        //Move collector_arm up
+        collector_arm.setPosition(0.77);
+
+
+
+
+
+
+
         foundation_mover.setPosition(0);
     }
 

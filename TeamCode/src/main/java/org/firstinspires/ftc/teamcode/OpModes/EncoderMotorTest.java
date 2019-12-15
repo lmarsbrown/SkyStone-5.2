@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
 @TeleOp(name="Encoder Motor Test", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class EncoderMotorTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

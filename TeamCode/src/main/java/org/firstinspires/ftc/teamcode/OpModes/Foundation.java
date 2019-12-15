@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="PortTest", group="Iterative Opmode")
+@Autonomous(name="Foundation", group="Iterative Opmode")
 @Disabled
-public class PortTest extends OpMode {
+public class Foundation extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -28,7 +29,6 @@ public class PortTest extends OpMode {
     private DcMotor rightBack;
     private DcMotor horizontal_extender;
     private DcMotor vertical_extender;
-    private DcMotor enc_left;
 
     private Servo collector_arm;
     private Servo foundation_mover;
@@ -55,7 +55,6 @@ public class PortTest extends OpMode {
         rightBack           = hardwareMap.get(DcMotor.class, "right_back");
         horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
-        enc_left   = hardwareMap.get(DcMotor.class, "enc_left");
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
@@ -78,12 +77,19 @@ public class PortTest extends OpMode {
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rowboat = new Robot_Localizer(enc_left,rightFront,rightBack,0.958);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
 
-        collector_arm.setPosition(0.403);
+
+        //Move collector_arm up
+        collector_arm.setPosition(0.77);
+
+
+
+
+
         foundation_mover.setPosition(0);
     }
 
@@ -92,6 +98,7 @@ public class PortTest extends OpMode {
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -99,6 +106,24 @@ public class PortTest extends OpMode {
      */
     @Override
     public void start() {
+        control.gotoPoint(new Transform(90,670,0),true,false,0.6,0,(Object rw3f)->{
+            control.gotoPoint(new Transform(90,710,0),true,true,0.4,0,(Object abcdesdresitantusbhub)->{
+
+                foundation_mover.setPosition(0.57);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                control.gotoPoint(new Transform(90,710,-0.4),true,true,0.8,0,(Object thisvarnamewaitnoparamnameidontsknohaaaaaa)->{
+                    control.gotoPoint(new Transform(0,600,-Math.PI*0.5),true,true,0.8,0,(Object whatidontknowwhatjusttellmeplease)->{return 0; });
+                    return 0;
+                });
+                return 0;
+            });
+            return 0;
+        });
         runtime.reset();
     }
 

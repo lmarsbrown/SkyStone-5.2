@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -26,9 +25,9 @@ import org.firstinspires.ftc.teamcode.Utils.VuLambda;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-@Autonomous(name="VuforiaTestDrive", group="Iterative Opmode")
+@Autonomous(name="1 Stone Red", group="Iterative Opmode")
 //@Disabled
-public class VuforiaTestDrive extends OpMode {
+public class VuforiaTestDriveRed extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -49,6 +48,7 @@ public class VuforiaTestDrive extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
+    private Servo capstone_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -77,6 +77,7 @@ public class VuforiaTestDrive extends OpMode {
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+        capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -111,6 +112,7 @@ public class VuforiaTestDrive extends OpMode {
         targetElement.setName("targetElement");
         //Move collector_arm up
         collector_arm.setPosition(0.77);
+        capstone_arm.setPosition(1);
 
 
 
@@ -131,32 +133,35 @@ public class VuforiaTestDrive extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(-230,-300,0),true,true,0.2,0.00003,(Object obj)->{
+        control.gotoPoint(new Transform(0,-300,0),true,true,0.7,0.00003,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    Transform stoneAPos = new Transform( rowboat.pos.x+200-pose.getRow(1).get(3),-300-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
-                    control.gotoPoint(stoneAPos,true,true,0.25,0.000008,(Object o)->{
-                        collector_arm.setPosition(0.403);
-                        inner_collector.setPower(-0.7);
-                        outer_collector.setPower(-0.7);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    Transform stoneAPos = new Transform( rowboat.pos.x+175-pose.getRow(1).get(3),-100-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
+                    control.gotoPoint(stoneAPos,true,false,0.7,0.000008,(Object o)->{
+                        control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y-200,0),true,true,0.4,0.000008,(Object asdehteherh)-> {
+                            collector_arm.setPosition(0.403);
+                            inner_collector.setPower(-0.7);
+                            outer_collector.setPower(-0.7);
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 
-                        inner_collector.setPower(0);
-                        outer_collector.setPower(0);
+                            inner_collector.setPower(0);
+                            outer_collector.setPower(0);
 
-                         control.gotoPoint(new Transform( rowboat.pos.x,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object yyyyyyyyy)->{
-                             control.gotoPoint(new Transform( -1111,-650,-Math.PI*0.5),true,true,0.2,0.00003,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
-                                 collector_arm.setPosition(0.72);
-                                 control.gotoPoint(new Transform( -700,-650,-Math.PI*0.5),true,false,0.2,0.00003,(Object sgerhgseg)->0);
+                            control.gotoPoint(new Transform(rowboat.pos.x, -650, Math.PI * 0.5), true, true, 0.7, 0.00003, (Object yyyyyyyyy) -> {
+                                control.gotoPoint(new Transform(1333, -650, Math.PI * 0.5), true, true, 0.7, 0.00003, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
+                                    collector_arm.setPosition(0.72);
+                                    control.gotoPoint(new Transform(888, -650, Math.PI * 0.5), true, false, 0.7, 0.00003, (Object sgerhgseg) -> 0);
 
-                                 return  0;
-                             });
-                             return  0;
-                         });
+                                    return 0;
+                                });
+                                return 0;
+                            });
+                            return 0;
+                        });
                         return 0;
                     });
                     //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
@@ -175,8 +180,16 @@ public class VuforiaTestDrive extends OpMode {
     public void loop() {
 
         if(!limit_switch_back.getState())horizontal_extender.setPower(0);
+        if(!limit_switch_front.getState()){
+            horizontal_extender.setPower(0);
+            control.clearGoto();
+            control.setVec(new Transform(0,0,0),0);
+        }
 
         rowboat.relocalize();
+        telemetry.addData("X Position", rowboat.pos.x);
+        telemetry.addData("Y Position", rowboat.pos.y);
+        telemetry.addData("Rotation", rowboat.pos.r);
         /*OpenGLMatrix pose = getBlock(targetElement).getFtcCameraFromTarget();
         if(pose != null)telemetry.addData("x",pose.getRow(0).get(3));
         if(pose != null)telemetry.addData("y",pose.getRow(2).get(3)*0.9);*/
@@ -216,12 +229,12 @@ public class VuforiaTestDrive extends OpMode {
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
             telemetry.addData("",stapd.get());
-            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>200)
+            if((runtime.milliseconds()-start)%3000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
-                control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.2,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
+                control.gotoPoint(new Transform(rowboat.pos.x-200,rowboat.pos.y,0),true,true,0.7,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
-            else if((runtime.milliseconds()-start)%2000>100)
+            else if((runtime.milliseconds()-start)%3000>100)
             {
                 stapd.set(false);
             }
