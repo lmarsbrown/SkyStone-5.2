@@ -85,7 +85,7 @@ public class Park extends OpMode {
 
         going_to_pt = false;
 
-        collector_arm.setPosition(0.403);
+        collector_arm.setPosition(0.77);
         foundation_mover.setPosition(0);
     }
 

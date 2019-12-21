@@ -130,7 +130,7 @@ public class VuforiaTestDriveRedTwoStones extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(0,-300,0),true,true,0.7,0.00003,(Object obj)->{
+        control.gotoPoint(new Transform(0,-400,0),true,true,0.7,0.00003,(Object obj)->{
             detect(targetElement,(block)->{
                 OpenGLMatrix pose = block.getFtcCameraFromTarget();
                 Transform stoneAPos = new Transform( rowboat.pos.x+175-pose.getRow(1).get(3),-300-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
@@ -248,12 +248,12 @@ public class VuforiaTestDriveRedTwoStones extends OpMode {
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
             telemetry.addData("",stapd.get());
-            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>200)
+            if((runtime.milliseconds()-start)%3000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
                 control.gotoPoint(new Transform(rowboat.pos.x-250,rowboat.pos.y,0),true,true,0.7,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
-            else if((runtime.milliseconds()-start)%200>100)
+            else if((runtime.milliseconds()-start)%3000>100)
             {
                 stapd.set(false);
             }

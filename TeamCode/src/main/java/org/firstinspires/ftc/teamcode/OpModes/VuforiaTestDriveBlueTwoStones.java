@@ -252,7 +252,7 @@ public class VuforiaTestDriveBlueTwoStones extends OpMode {
                 stapd.set(true);
                 control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.7,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
-            else if((runtime.milliseconds()-start)%200>100)
+            else if((runtime.milliseconds()-start)%2000>100)
             {
                 stapd.set(false);
             }
