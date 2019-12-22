@@ -49,24 +49,24 @@ public class FieldCentric extends OpMode {
 
     @Override
     public void init() {
-        leftFront           = hardwareMap.get(DcMotor.class, "left_front");
-        rightFront          = hardwareMap.get(DcMotor.class, "right_front");
-        leftBack            = hardwareMap.get(DcMotor.class, "left_back");
-        rightBack           = hardwareMap.get(DcMotor.class, "right_back");
-        horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
-        vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
+        leftFront              = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront             = hardwareMap.get(DcMotor.class, "right_front");
+        leftBack               = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack              = hardwareMap.get(DcMotor.class, "right_back");
+        horizontal_extender    = hardwareMap.get(DcMotor.class, "horizontal_ext");
+        vertical_extender      = hardwareMap.get(DcMotor.class, "vertical_ext");
 
-        collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
-        foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
-        capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
+        collector_arm          = hardwareMap.get(Servo.class, "collector_arm");
+        foundation_mover       = hardwareMap.get(Servo.class, "Foundation_mover");
+        capstone_arm           = hardwareMap.get(Servo.class, "Capstone_Arm");
 
-        outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
-        inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
+        outer_collector        = hardwareMap.get(CRServo.class, "outer_collector");
+        inner_collector        = hardwareMap.get(CRServo.class, "inner_collector");
 
-        limit_switch_back   = hardwareMap.get(DigitalChannel.class, "limit_switch1");
-        limit_switch_front  = hardwareMap.get(DigitalChannel.class, "limit_switch2");
+        limit_switch_back      = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        limit_switch_front     = hardwareMap.get(DigitalChannel.class, "limit_switch2");
 
-        positional_offset   = 0;
+        positional_offset      = 0;
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -166,14 +166,15 @@ public class FieldCentric extends OpMode {
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
         telemetry.addData("Rotation", rowboat.pos.r);
+
         if(saved_robot_pos != null)
         {
             telemetry.addLine();
             telemetry.addData("Saved X Position", saved_robot_pos.x);
             telemetry.addData("Saved Y Position", saved_robot_pos.y);
             telemetry.addData("Saved Rotation", saved_robot_pos.r);
-
         }
+
         telemetry.update();
     }
 
