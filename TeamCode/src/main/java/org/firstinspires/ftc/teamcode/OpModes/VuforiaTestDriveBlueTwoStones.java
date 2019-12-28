@@ -130,12 +130,12 @@ public class VuforiaTestDriveBlueTwoStones extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(-230,-300,0),true,true,0.7,0.00003,(Object obj)->{
+        control.gotoPoint(new Transform(-230,-300,0),true,0.1,0.7,20,(Object obj)->{
             detect(targetElement,(block)->{
                 OpenGLMatrix pose = block.getFtcCameraFromTarget();
                 Transform stoneAPos = new Transform( rowboat.pos.x+175-pose.getRow(1).get(3),-300-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
-                control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y+200,0),true,true,0.7,0.000008,(Object o)->{
-                    control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y,0),true,true,0.35,0.000008,(Object op)-> {
+                control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y+200,0),true,0.1,0.7,20,(Object o)->{
+                    control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y,0),true,0.1,0.7,20,(Object op)-> {
                         collector_arm.setPosition(0.403);
                         inner_collector.setPower(-0.7);
                         outer_collector.setPower(-0.7);
@@ -148,11 +148,11 @@ public class VuforiaTestDriveBlueTwoStones extends OpMode {
                         inner_collector.setPower(0);
                         outer_collector.setPower(0);
 
-                        control.gotoPoint(new Transform(rowboat.pos.x, -620, -Math.PI * 0.5), true, true, 0.7, 0.00003, (Object yyyyyyyyy) -> {
-                            control.gotoPoint(new Transform(-1111, -620, -Math.PI * 0.5), true, false, 0.7, 0.00003, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
+                        control.gotoPoint(new Transform(rowboat.pos.x, -620, -Math.PI * 0.5), true, 0.1,0.7,20, (Object yyyyyyyyy) -> {
+                            control.gotoPoint(new Transform(-1111, -620, -Math.PI * 0.5), true, 0.1,0.7,20, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
                                 collector_arm.setPosition(0.72);
-                                control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760), -500, 0), true, true, 0.7, 0.00003, (Object sgerhgseg) -> {
-                                    control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760), -760, 0), true, true, 0.35, 0, (Object irewgrw) -> {
+                                control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760), -500, 0), true, 0.1,0.7,20, (Object sgerhgseg) -> {
+                                    control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760), -760, 0), true, 0.1,0.7,20, (Object irewgrw) -> {
                                         collector_arm.setPosition(0.403);
                                         inner_collector.setPower(-0.7);
                                         outer_collector.setPower(-0.7);
@@ -164,10 +164,10 @@ public class VuforiaTestDriveBlueTwoStones extends OpMode {
 
                                         inner_collector.setPower(0);
                                         outer_collector.setPower(0);
-                                        control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760),-630,-Math.PI*0.5),true,true,0.7,0,(Object onocompetiontomorrowihavetogohomeat7no)->{
-                                            control.gotoPoint(new Transform(-1111,-620,-Math.PI*0.5),true,false,0.7,0,(Object togohomeat)->{
+                                        control.gotoPoint(new Transform(Math.min(stoneAPos.x + 600, 760),-630,-Math.PI*0.5),true,0.1,0.7,20,(Object onocompetiontomorrowihavetogohomeat7no)->{
+                                            control.gotoPoint(new Transform(-1111,-620,-Math.PI*0.5),true,0.1,0.7,20,(Object togohomeat)->{
                                                 collector_arm.setPosition(0.72);
-                                                control.gotoPoint(new Transform(-800,-620,-Math.PI*0.5),true,true,0.7,0,(Object meat)->{
+                                                control.gotoPoint(new Transform(-800,-620,-Math.PI*0.5),true,0.1,0.7,20,(Object meat)->{
                                                     return 0;
                                                 });
                                                 return 0;
@@ -250,7 +250,7 @@ public class VuforiaTestDriveBlueTwoStones extends OpMode {
             if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
-                control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,true,0.7,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
+                control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,0.1,0.7,20,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
             else if((runtime.milliseconds()-start)%2000>100)
             {

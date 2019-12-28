@@ -119,7 +119,7 @@ public class FieldCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, true, 0.7,0.00003, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, false, 0.1,0.7,20, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });

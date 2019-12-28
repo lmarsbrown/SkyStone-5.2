@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Utils.Interval;
 import org.firstinspires.ftc.teamcode.Utils.Lambda;
-import org.firstinspires.ftc.teamcode.Utils.MyMath;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
-
-import java.util.Vector;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -62,7 +59,7 @@ public class Robot_Controller {
             double turnToOffset = (dir.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             telem = turnToOffset+"";
             double turnToMulti = (1-(0.5/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
-            if(Math.abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
+            if(abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
         }
         dir.normalize();
         dir.scale(len);
@@ -73,7 +70,7 @@ public class Robot_Controller {
     }
     //  TODO: Add turn + forward
     // TODO: Make speed and slop into params
-    public double gotoPointLoop(Transform point, boolean near,boolean end, double maxSpeed, double slowConst)
+    public double gotoPointLoop(Transform point,boolean end, double minSpeed, double maxSpeed, double slop)
     {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
@@ -81,24 +78,21 @@ public class Robot_Controller {
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
         double fPower = -mPid.update(goalDist);
         double rOffset = Math.PI+((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
-        double rPower = 0;
-
-        if(!near)rPower = ((1-(1/(1+0.2*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
         dir.r = 0;
 
-        if((goalDist<30||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
+        if(goalDist<slop||stat)
         {
             stat = true;
             double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             telem = turnToOffset+"";
             //double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
             double turnToMulti = -rPid.update(turnToOffset);
-            if(Math.abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
+            if(abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
             else {setVec(new Transform(0,0,0),0);doneCount++;stat = false;return doneCount;}
         }
         else
         {
-            setVec(dir,Math.min(fPower,maxSpeed));
+            setVec(dir,Math.max(Math.min(fPower,maxSpeed),minSpeed));
         }
         doneCount = 0;
         return doneCount;
@@ -133,7 +127,7 @@ public class Robot_Controller {
         }
     }*/
 
-    public void gotoPoint(Transform point,boolean near, boolean end,double maxSpeed, double slowConst, Lambda callback)
+    public void gotoPoint(Transform point, boolean end,double minSpeed, double maxSpeed, double slop, Lambda callback)
     {
         mPid.reset(0);
         rPid.reset(0);
@@ -142,7 +136,7 @@ public class Robot_Controller {
             return 1;
         },1);
         robot.onLocalize = (q)->{
-            double count = gotoPointLoop(point,near,end,maxSpeed,slowConst);
+            double count = gotoPointLoop(point,end,minSpeed,maxSpeed,slop);
             if(count>10||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };

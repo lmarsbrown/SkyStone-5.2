@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -115,7 +113,7 @@ public class Park extends OpMode {
         if(!run)
         {
             run = true;
-            control.gotoPoint(new Transform(10,750,0), false, true, 0.25,0.00004, (Object obj) -> {
+            control.gotoPoint(new Transform(10,750,0), false, 0.1,0.7,20, (Object obj) -> {
                 return 0;
             });
         }

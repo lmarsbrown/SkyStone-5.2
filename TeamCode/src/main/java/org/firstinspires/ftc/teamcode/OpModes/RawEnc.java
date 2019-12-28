@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -14,9 +13,9 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@Autonomous(name="Foundation", group="Iterative Opmode")
-@Disabled
-public class Foundation extends OpMode {
+@TeleOp(name="Template", group="Iterative Opmode")
+//@Disabled
+public class RawEnc extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -89,6 +88,8 @@ public class Foundation extends OpMode {
 
 
 
+
+
         foundation_mover.setPosition(0);
     }
 
@@ -105,24 +106,6 @@ public class Foundation extends OpMode {
      */
     @Override
     public void start() {
-        control.gotoPoint(new Transform(90,670,0),true,0.1,0.7,20,(Object rw3f)->{
-            control.gotoPoint(new Transform(90,710,0),true,0.1,0.7,20,(Object abcdesdresitantusbhub)->{
-
-                foundation_mover.setPosition(0.57);
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                control.gotoPoint(new Transform(90,710,-0.4),true,0.1,0.7,20,(Object thisvarnamewaitnoparamnameidontsknohaaaaaa)->{
-                    control.gotoPoint(new Transform(0,600,-Math.PI*0.5),true,0.1,0.7,20,(Object whatidontknowwhatjusttellmeplease)->{return 0; });
-                    return 0;
-                });
-                return 0;
-            });
-            return 0;
-        });
         runtime.reset();
     }
 
@@ -132,6 +115,10 @@ public class Foundation extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
+
+        telemetry.addData("enc1", vertical_extender.getCurrentPosition());
+        telemetry.addData("enc2", rightFront.getCurrentPosition());
+        telemetry.addData("enc3", rightBack.getCurrentPosition());
 
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);

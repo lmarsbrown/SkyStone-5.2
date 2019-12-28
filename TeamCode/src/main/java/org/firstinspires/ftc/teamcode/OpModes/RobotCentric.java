@@ -115,7 +115,7 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, true, 0.7,0.00003, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, false, 0.1,0.7,20, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });
@@ -155,9 +155,9 @@ public class RobotCentric extends OpMode {
         if(gamepad2.b) capstone_arm.setPosition(0.5);
         if(gamepad2.x) capstone_arm.setPosition(1);
 
-        telemetry.addData("X Position", rowboat.pos.x);
-        telemetry.addData("Y Position", rowboat.pos.y);
-        telemetry.addData("Rotation", rowboat.pos.r);
+        telemetry.addData("X Position", leftBack.getCurrentPosition());
+        telemetry.addData("Y Position", rightFront.getCurrentPosition());
+        telemetry.addData("Rotation", rightBack.getCurrentPosition());
         if(saved_robot_pos != null)
         {
             telemetry.addLine();

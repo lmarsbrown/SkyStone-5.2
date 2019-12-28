@@ -44,7 +44,7 @@ public class Robot_Localizer {
     public void relocalize() {
         telemetryA = String.valueOf(encLeft.getCurrentPosition());
         telemetryB = String.valueOf(encRight.getCurrentPosition());
-        //telemetryC = String.valueOf(encSide.getCurrentPosition());
+        telemetryC = String.valueOf(encSide.getCurrentPosition());
         //Getting step vars
         steps = getSteps();
         double rStep = steps.r;
@@ -88,9 +88,9 @@ public class Robot_Localizer {
         calibrating = false;
         calibrationCount = 1;
     }
-    public double getCalibrationConst() throws Exception {
+    public double getCalibrationConst() {
         if(!calibrating)return calibrationConstant;
-        else throw(new Exception("Cannot get calibrationd const while calibrating"));
+        else throw(new RuntimeException("Cannot get calibrationd const while calibrating"));
     }
 
     private Transform getRPosTotal() {
@@ -116,7 +116,6 @@ public class Robot_Localizer {
         double d = Math.hypot(steps.x, steps.y);
         double arcRad = d / steps.r;
         Transform relativeArcPos = new Transform(Math.cos(Math.PI - steps.r) * arcRad + (pos.x + arcRad), (Math.sin(Math.PI - steps.r) * arcRad) + pos.y, pos.r);
-        telemetryC = String.valueOf(pos.r + Math.atan2(steps.x, steps.y));
         relativeArcPos.rotate(pos, pos.r + Math.atan2(steps.x, steps.y));
         //relativeArcPos.rotate(pos.getV2(),1);
         return relativeArcPos;
