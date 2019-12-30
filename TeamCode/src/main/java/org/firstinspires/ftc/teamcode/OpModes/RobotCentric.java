@@ -115,7 +115,7 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, 0.1,0.7,20, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, true, 0.1,0.7,20, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });
@@ -129,7 +129,7 @@ public class RobotCentric extends OpMode {
             control.clearGoto();
         }
 
-        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
+        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr*0.5, true);
 
         if      (gamepad2.dpad_down && limit_switch_back.getState())  horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
         else if (gamepad2.dpad_up   && limit_switch_front.getState()) horizontal_extender.setPower(gp2_percent_pwr * 0.5);
@@ -152,12 +152,14 @@ public class RobotCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
+
         if(gamepad2.b) capstone_arm.setPosition(0.5);
         if(gamepad2.x) capstone_arm.setPosition(1);
 
-        telemetry.addData("X Position", leftBack.getCurrentPosition());
-        telemetry.addData("Y Position", rightFront.getCurrentPosition());
-        telemetry.addData("Rotation", rightBack.getCurrentPosition());
+        telemetry.addData("X Position", rowboat.pos.x);
+        telemetry.addData("Y Position", rowboat.pos.y);
+        telemetry.addData("Rotation", rowboat.pos.r);
+        telemetry.addData("Speed", rowboat.speed);
         if(saved_robot_pos != null)
         {
             telemetry.addLine();

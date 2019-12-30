@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Utils.*;
 
@@ -19,11 +20,15 @@ public class Robot_Localizer {
     public String telemetryA = "";
     public String telemetryB = "";
     public String telemetryC = "";
+    public double speed = 0;
     private double calibrationConstant = 1;
     private double calibrationCount = 1;
     private boolean calibrating = false;
+    private double pTime = 0;
     protected Lambda onLocalize;
     protected Transform steps;
+
+    private ElapsedTime runtime;
 
     public Robot_Localizer(DcMotor encLeft, DcMotor encRight, DcMotor encSide, double calibrationConst) {
         //Setting vars to constructor values
@@ -38,15 +43,29 @@ public class Robot_Localizer {
         pPos.x = rPosToastal.r;
         pPos.y = 0.5 * (rPosToastal.x + rPosToastal.y);
         pPos.r = ((rPosToastal.x - rPosToastal.y) * Math.PI * 2) / (Math.PI * encDist * 2);
+
+        runtime = new ElapsedTime();
     }
 
     //Calculates new position based on encoder values
     public void relocalize() {
+
         telemetryA = String.valueOf(encLeft.getCurrentPosition());
         telemetryB = String.valueOf(encRight.getCurrentPosition());
         telemetryC = String.valueOf(encSide.getCurrentPosition());
         //Getting step vars
         steps = getSteps();
+
+
+
+        double t = runtime.milliseconds();
+        double timePassed = t-pTime;
+        pTime = t;
+        speed = (steps.getLength()/timePassed)*2;
+
+
+
+
         double rStep = steps.r;
         Transform rPosToastal = getRPosTotal();
 

@@ -18,8 +18,10 @@ public class Robot_Controller {
     public Interval inter;
     private double doneCount = 0;
     public boolean stat = false;
-    private PIDController rPid = new PIDController(0.65,0.13,0.18,0);
-    private PIDController mPid = new PIDController(0.023,0,0.1,0);
+    private PIDController rPid = new PIDController(0.65,0.13,-1.8,0);
+    private PIDController mPid = new PIDController(0.023,0,0.3,0);
+    private PIDController vPid = new PIDController(0.1,0,0,0.7);
+    private double pTPower = 0;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -40,6 +42,31 @@ public class Robot_Controller {
         lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*power );
         rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)*power );
     }
+
+
+    public void setVec(Transform dir, double power, boolean PID)
+    {
+        if(PID)
+        {
+            dir.normalize();
+            double sideMultiplierInverse                  = abs(dir.x + dir.y)+abs(dir.r);
+            double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
+            vPid.setGoal(power);
+            pTPower += vPid.update(robot.speed);
+
+
+            lfm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
+            rfm.setPower((-dir.y * sideMultiplier - dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
+            lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
+            rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
+        }
+    }
+    public void resetVecPid(double power)
+    {
+        vPid.reset(power);
+    }
+
+
     public void stableVec(Transform dir, double power,boolean holdR)
     {
         double len = dir.getLength();
