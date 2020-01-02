@@ -86,7 +86,7 @@ public class FieldCentric extends OpMode {
         going_to_pt = false;
 
         collector_arm.setPosition(0.72);
-        foundation_mover.setPosition(0);
+        foundation_mover.setPosition(0.05);
         capstone_arm.setPosition(1);
     }
 
@@ -126,7 +126,7 @@ public class FieldCentric extends OpMode {
         }
 
         if (gamepad1.a) foundation_mover.setPosition(0.57);
-        if (gamepad1.b) foundation_mover.setPosition(0);
+        if (gamepad1.b) foundation_mover.setPosition(0.05);
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
@@ -173,8 +173,9 @@ public class FieldCentric extends OpMode {
             telemetry.addData("Saved X Position", saved_robot_pos.x);
             telemetry.addData("Saved Y Position", saved_robot_pos.y);
             telemetry.addData("Saved Rotation", saved_robot_pos.r);
-        }
 
+        }
+        telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
         telemetry.update();
     }
 

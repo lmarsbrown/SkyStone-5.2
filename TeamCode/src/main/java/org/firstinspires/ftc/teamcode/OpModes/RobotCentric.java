@@ -82,7 +82,7 @@ public class RobotCentric extends OpMode {
         going_to_pt = false;
 
         collector_arm.setPosition(0.72);
-        foundation_mover.setPosition(0);
+        foundation_mover.setPosition(0.05);
         capstone_arm.setPosition(1);
     }
 
@@ -122,7 +122,7 @@ public class RobotCentric extends OpMode {
         }
 
         if (gamepad1.a) foundation_mover.setPosition(0.57);
-        if (gamepad1.b) foundation_mover.setPosition(0);
+        if (gamepad1.b) foundation_mover.setPosition(0.05);
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
@@ -158,6 +158,7 @@ public class RobotCentric extends OpMode {
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
         telemetry.addData("Rotation", rowboat.pos.r);
+
         if(saved_robot_pos != null)
         {
             telemetry.addLine();
@@ -166,6 +167,7 @@ public class RobotCentric extends OpMode {
             telemetry.addData("Saved Rotation", saved_robot_pos.r);
 
         }
+        telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
         telemetry.update();
     }
 
