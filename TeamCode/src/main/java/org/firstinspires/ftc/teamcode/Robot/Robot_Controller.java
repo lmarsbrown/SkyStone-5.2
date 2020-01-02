@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Utils.Interval;
 import org.firstinspires.ftc.teamcode.Utils.Lambda;
-import org.firstinspires.ftc.teamcode.Utils.MyMath;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
-
-import java.util.Vector;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -21,8 +18,10 @@ public class Robot_Controller {
     public Interval inter;
     private double doneCount = 0;
     public boolean stat = false;
-    private PIDController rPid = new PIDController(0.65,0.13,0.18,0);
-    private PIDController mPid = new PIDController(0.023,0,0.1,0);
+    private PIDController rPid = new PIDController(0.65,0.13,-1.8,0);
+    private PIDController mPid = new PIDController(0.023,0,0.3,0);
+    private PIDController vPid = new PIDController(0.1,0,0,0.7);
+    private double pTPower = 0;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -43,6 +42,31 @@ public class Robot_Controller {
         lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*power );
         rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)*power );
     }
+
+
+    public void setVec(Transform dir, double power, boolean PID)
+    {
+        if(PID)
+        {
+            dir.normalize();
+            double sideMultiplierInverse                  = abs(dir.x + dir.y)+abs(dir.r);
+            double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
+            vPid.setGoal(power);
+            pTPower += vPid.update(robot.speed);
+
+
+            lfm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
+            rfm.setPower((-dir.y * sideMultiplier - dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
+            lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
+            rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
+        }
+    }
+    public void resetVecPid(double power)
+    {
+        vPid.reset(power);
+    }
+
+
     public void stableVec(Transform dir, double power,boolean holdR)
     {
         double len = dir.getLength();
@@ -62,7 +86,7 @@ public class Robot_Controller {
             double turnToOffset = (dir.r-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             telem = turnToOffset+"";
             double turnToMulti = (1-(0.5/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
-            if(Math.abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
+            if(abs(turnToOffset)>0.03)setVec(new Transform(0,0,turnToMulti),1);
         }
         dir.normalize();
         dir.scale(len);
@@ -73,7 +97,7 @@ public class Robot_Controller {
     }
     //  TODO: Add turn + forward
     // TODO: Make speed and slop into params
-    public double gotoPointLoop(Transform point, boolean near,boolean end, double maxSpeed, double slowConst)
+    public double gotoPointLoop(Transform point,boolean end, double minSpeed, double maxSpeed, double slop)
     {
         Transform dir = new Transform(point.x-robot.pos.x,point.y-robot.pos.y,0);
         dir.normalize();
@@ -81,24 +105,21 @@ public class Robot_Controller {
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
         double fPower = -mPid.update(goalDist);
         double rOffset = Math.PI+((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
-        double rPower = 0;
-
-        if(!near)rPower = ((1-(1/(1+0.2*rOffset*rOffset)))*Math.signum(rOffset))*fPower;
         dir.r = 0;
 
-        if((goalDist<30||(goalDist<60&&!end||(goalDist<60&&!end)))||stat)
+        if(goalDist<slop||stat)
         {
             stat = true;
             double turnToOffset = (((point.r%(Math.PI*2))%-(Math.PI*2))-((robot.pos.r%(Math.PI*2))%-(Math.PI*2)));
             telem = turnToOffset+"";
             //double turnToMulti = (1-(0.7/(1+turnToOffset*turnToOffset)))*Math.signum(turnToOffset);
             double turnToMulti = -rPid.update(turnToOffset);
-            if(Math.abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
+            if(abs(turnToOffset)>0.03&&end)setVec(new Transform(0,0,turnToMulti),1);
             else {setVec(new Transform(0,0,0),0);doneCount++;stat = false;return doneCount;}
         }
         else
         {
-            setVec(dir,Math.min(fPower,maxSpeed));
+            setVec(dir,Math.max(Math.min(fPower,maxSpeed),minSpeed));
         }
         doneCount = 0;
         return doneCount;
@@ -133,7 +154,7 @@ public class Robot_Controller {
         }
     }*/
 
-    public void gotoPoint(Transform point,boolean near, boolean end,double maxSpeed, double slowConst, Lambda callback)
+    public void gotoPoint(Transform point, boolean end,double minSpeed, double maxSpeed, double slop, Lambda callback)
     {
         mPid.reset(0);
         rPid.reset(0);
@@ -142,7 +163,7 @@ public class Robot_Controller {
             return 1;
         },1);
         robot.onLocalize = (q)->{
-            double count = gotoPointLoop(point,near,end,maxSpeed,slowConst);
+            double count = gotoPointLoop(point,end,minSpeed,maxSpeed,slop);
             if(count>10||(count>3&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };
