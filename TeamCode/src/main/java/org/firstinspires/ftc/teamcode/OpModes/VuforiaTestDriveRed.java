@@ -133,12 +133,12 @@ public class VuforiaTestDriveRed extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(0,-300,0),true,true,0.7,0.00003,(Object obj)->{
+        control.gotoPoint(new Transform(0,-300,0),true,0.1,0.7,20,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
                     Transform stoneAPos = new Transform( rowboat.pos.x+175-pose.getRow(1).get(3),-100-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
-                    control.gotoPoint(stoneAPos,true,false,0.7,0.000008,(Object o)->{
-                        control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y-200,0),true,true,0.4,0.000008,(Object asdehteherh)-> {
+                    control.gotoPoint(stoneAPos,true,0.1,0.7,20,(Object o)->{
+                        control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y-200,0),true,0.1,0.7,20,(Object asdehteherh)-> {
                             collector_arm.setPosition(0.403);
                             inner_collector.setPower(-0.7);
                             outer_collector.setPower(-0.7);
@@ -151,10 +151,10 @@ public class VuforiaTestDriveRed extends OpMode {
                             inner_collector.setPower(0);
                             outer_collector.setPower(0);
 
-                            control.gotoPoint(new Transform(rowboat.pos.x, -650, Math.PI * 0.5), true, true, 0.7, 0.00003, (Object yyyyyyyyy) -> {
-                                control.gotoPoint(new Transform(1333, -650, Math.PI * 0.5), true, true, 0.7, 0.00003, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
+                            control.gotoPoint(new Transform(rowboat.pos.x, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object yyyyyyyyy) -> {
+                                control.gotoPoint(new Transform(1333, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
                                     collector_arm.setPosition(0.72);
-                                    control.gotoPoint(new Transform(888, -650, Math.PI * 0.5), true, false, 0.7, 0.00003, (Object sgerhgseg) -> 0);
+                                    control.gotoPoint(new Transform(888, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object sgerhgseg) -> 0);
 
                                     return 0;
                                 });
@@ -232,7 +232,7 @@ public class VuforiaTestDriveRed extends OpMode {
             if((runtime.milliseconds()-start)%3000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
-                control.gotoPoint(new Transform(rowboat.pos.x-200,rowboat.pos.y,0),true,true,0.7,0.00003,(Object yyyyyyhelpnoureversecard)->{return 0;});
+                control.gotoPoint(new Transform(rowboat.pos.x-200,rowboat.pos.y,0),true,0.1,0.7,20,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
             else if((runtime.milliseconds()-start)%3000>100)
             {

@@ -22,6 +22,10 @@ class PIDController
         pErr = 0;
         this.goal = goal;
     }
+    public void setGoal(double goal)
+    {
+        this.goal = goal;
+    }
     public double update(double input)
     {
         double error = goal - input;
