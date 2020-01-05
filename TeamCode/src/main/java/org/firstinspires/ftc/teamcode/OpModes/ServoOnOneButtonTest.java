@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
 @TeleOp(name="Servo On 1 Btn Test", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class ServoOnOneButtonTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

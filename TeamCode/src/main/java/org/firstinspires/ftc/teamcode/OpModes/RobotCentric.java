@@ -45,6 +45,10 @@ public class RobotCentric extends OpMode {
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
 
+    private Boolean x_down;
+
+    private String capstone_arm_loc;
+
     @Override
     public void init() {
         leftFront           = hardwareMap.get(DcMotor.class, "left_front");
@@ -83,7 +87,10 @@ public class RobotCentric extends OpMode {
 
         collector_arm.setPosition(0.72);
         foundation_mover.setPosition(0.05);
-        capstone_arm.setPosition(1);
+        capstone_arm.setPosition(0);
+
+        x_down = Boolean.FALSE;
+        capstone_arm_loc = "up";
     }
 
     @Override
@@ -115,7 +122,7 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, true, 0.7,0.00003, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, false, 0.1,0.7,20, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });
@@ -152,8 +159,17 @@ public class RobotCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        if(gamepad2.b) capstone_arm.setPosition(0.5);
-        if(gamepad2.x) capstone_arm.setPosition(1);
+        if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
+            capstone_arm.setPosition(0.7);
+            capstone_arm_loc = "down";
+            x_down = Boolean.TRUE;
+        } else if(gamepad2.x && capstone_arm_loc == "down" && !x_down) {
+            capstone_arm.setPosition(0);
+            capstone_arm_loc = "up";
+            x_down = Boolean.TRUE;
+        } else if(!gamepad2.x && x_down) {
+            x_down = Boolean.FALSE;
+        }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);

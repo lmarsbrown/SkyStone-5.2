@@ -47,6 +47,10 @@ public class FieldCentric extends OpMode {
 
     private double positional_offset;
 
+    private Boolean x_down;
+
+    private String capstone_arm_loc;
+
     @Override
     public void init() {
         leftFront              = hardwareMap.get(DcMotor.class, "left_front");
@@ -87,7 +91,10 @@ public class FieldCentric extends OpMode {
 
         collector_arm.setPosition(0.72);
         foundation_mover.setPosition(0.05);
-        capstone_arm.setPosition(1);
+        capstone_arm.setPosition(0);
+
+        x_down = Boolean.FALSE;
+        capstone_arm_loc = "up";
     }
 
     @Override
@@ -158,10 +165,17 @@ public class FieldCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        if(gamepad2.b) capstone_arm.setPosition(0.5);
-        if(gamepad2.x) capstone_arm.setPosition(1);
-
-        if(gamepad1.right_trigger > 0.9) positional_offset = rowboat.pos.r;
+        if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
+            foundation_mover.setPosition(0.7);
+            capstone_arm_loc = "down";
+            x_down = Boolean.TRUE;
+        } else if(gamepad2.x && capstone_arm_loc == "down" && !x_down) {
+            foundation_mover.setPosition(0);
+            capstone_arm_loc = "up";
+            x_down = Boolean.TRUE;
+        } else if(!gamepad2.x && x_down) {
+            x_down = Boolean.FALSE;
+        }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
