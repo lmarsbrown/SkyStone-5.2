@@ -29,7 +29,7 @@ public class RobotCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
-    private Servo capstone_arm;
+    //private Servo capstone_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -60,7 +60,7 @@ public class RobotCentric extends OpMode {
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
-        capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
+        //capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -87,7 +87,7 @@ public class RobotCentric extends OpMode {
 
         collector_arm.setPosition(0.72);
         foundation_mover.setPosition(0.05);
-        capstone_arm.setPosition(0);
+        //capstone_arm.setPosition(0.82);
 
         x_down = Boolean.FALSE;
         capstone_arm_loc = "up";
@@ -159,17 +159,17 @@ public class RobotCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
-            capstone_arm.setPosition(0.7);
+        /*if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
+            capstone_arm.setPosition(0.54);
             capstone_arm_loc = "down";
             x_down = Boolean.TRUE;
         } else if(gamepad2.x && capstone_arm_loc == "down" && !x_down) {
-            capstone_arm.setPosition(0);
+            capstone_arm.setPosition(0.82);
             capstone_arm_loc = "up";
             x_down = Boolean.TRUE;
         } else if(!gamepad2.x && x_down) {
             x_down = Boolean.FALSE;
-        }
+        }*/
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);

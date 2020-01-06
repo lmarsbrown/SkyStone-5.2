@@ -12,15 +12,16 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Robot.StonePipeline;
+import org.firstinspires.ftc.teamcode.Utils.Lambda;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@Autonomous(name="OpenCV", group="Iterative Opmode")
+@Autonomous
 //@Disabled
-public class OpenCV extends OpMode {
+public class FullBlueAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -57,7 +58,7 @@ public class OpenCV extends OpMode {
 
     @Override
     public void init() {
-        /*leftFront           = hardwareMap.get(DcMotor.class, "left_front");
+        leftFront           = hardwareMap.get(DcMotor.class, "left_front");
         rightFront          = hardwareMap.get(DcMotor.class, "right_front");
         leftBack            = hardwareMap.get(DcMotor.class, "left_back");
         rightBack           = hardwareMap.get(DcMotor.class, "right_back");
@@ -83,10 +84,10 @@ public class OpenCV extends OpMode {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
+        horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        //control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
+        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
 
@@ -158,6 +159,24 @@ public class OpenCV extends OpMode {
      */
     @Override
     public void start() {
+        int stonePos = pip.stonePos;
+        webcam.stopStreaming();
+        getStone(stonePos+3,693,(Object stone)->{
+            control.gotoPoint(new Transform(2254,742,Math.PI*0.5),true,0.35,0.75,60,(Object alphabet)->{
+                control.gotoPoint(new Transform(2254,535,Math.PI*0.5),true
+                        ,0.25,0.5,80,(Object abbcdea)->{
+                    getStone(stonePos,750,(Object stone1)->{
+                        control.gotoPoint(new Transform(2021,742,Math.PI*0.5),true,0.35,1,60,(Object alphabetcdefg)->{
+                            return 0;
+                        });
+                        return 0;
+                    });
+                    return 0;
+                });
+                return 0;
+            });
+            return 0;
+        });
         runtime.reset();
     }
 
@@ -165,7 +184,9 @@ public class OpenCV extends OpMode {
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
-    public void loop() {
+    public void loop()
+    {
+        rowboat.relocalize();
         telemetry.addData("color",pip.stonePos);
     }
 
@@ -174,6 +195,20 @@ public class OpenCV extends OpMode {
      */
     @Override
     public void stop() {
+    }
+
+    private void getStone(int stoneNum,double y, Lambda callback)
+    {
+        control.gotoPoint(new Transform(322-(200*stoneNum),600,Math.PI*0.5),true,0.35,0.8,20,(Object obj)->{
+            control.gotoPoint(new Transform(322-(200*stoneNum),y,Math.PI*0.5),true,0.35,0.5,15,(Object obj1)->{
+                control.gotoPoint(new Transform(322-(200*stoneNum),y-150,Math.PI*0.5),true,35,0.5,80,(Object abbcdea)->{
+                    callback.call(stoneNum);
+                    return 0;
+                });
+                return 0;
+            });
+            return 0;
+        });
     }
 
 }
