@@ -203,7 +203,7 @@ public class FullBlueAuto extends OpMode {
                                 e.printStackTrace();
                             }
                             right_stone_collector_arm.setPosition(0);
-                            control.gotoPoint(new Transform(1000,700,Math.PI*0.5),true,0.25,0.75,40,(Object abcdefhlep)->0);
+                            control.gotoPoint(new Transform(1000,700,Math.PI*0.5),true,0.25,0.85,40,(Object abcdefhlep)->0);
                             return 0;
                         });
                         return 0;

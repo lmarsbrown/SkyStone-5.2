@@ -31,6 +31,8 @@ public class FieldCentric extends OpMode {
     private Servo foundation_mover;
     private Servo right_stone_collector_arm;
     private Servo left_stone_collector_arm;
+    private Servo right_stone_collector;
+    private Servo left_stone_collector;
 
     private Servo capstone_arm;
 
@@ -69,6 +71,8 @@ public class FieldCentric extends OpMode {
         foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
         right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
         left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
+        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
+        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
         capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector        = hardwareMap.get(CRServo.class, "outer_collector");
@@ -104,6 +108,13 @@ public class FieldCentric extends OpMode {
         x_down_gp2 = Boolean.FALSE;
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
+        right_stone_collector.setPosition(0.98);
+        left_stone_collector.setPosition(0.01);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         right_stone_collector_arm.setPosition(0);
         left_stone_collector_arm.setPosition(1);
     }

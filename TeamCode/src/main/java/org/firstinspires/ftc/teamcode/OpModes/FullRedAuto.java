@@ -204,7 +204,7 @@ public class FullRedAuto extends OpMode {
                             }
                             left_stone_collector_arm.setPosition(1);
                             control.gotoPoint(new Transform(-2021,520,-Math.PI*0.5),true,0.25,0.75,40,(Object abcdefhlep)->{
-                                control.gotoPoint(new Transform(-1000,520,-Math.PI*0.5),true,0.25,0.75,40,(Object icnEngilrsh)->0);
+                                control.gotoPoint(new Transform(-1000,520,-Math.PI*0.5),true,0.25,1,40,(Object icnEngilrsh)->0);
                                 return 0;
                             });
                             return 0;

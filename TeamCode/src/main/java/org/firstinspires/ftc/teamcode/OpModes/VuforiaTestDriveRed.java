@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Autonomous(name="1 Stone Red", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class VuforiaTestDriveRed extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

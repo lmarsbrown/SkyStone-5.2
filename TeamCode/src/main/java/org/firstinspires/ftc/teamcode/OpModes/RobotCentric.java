@@ -31,6 +31,8 @@ public class RobotCentric extends OpMode {
     private Servo foundation_mover;
     private Servo right_stone_collector_arm;
     private Servo left_stone_collector_arm;
+    private Servo right_stone_collector;
+    private Servo left_stone_collector;
 
     private Servo capstone_arm;
 
@@ -65,6 +67,8 @@ public class RobotCentric extends OpMode {
         foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
         right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
         left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
+        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
+        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
         capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
@@ -96,6 +100,13 @@ public class RobotCentric extends OpMode {
 
         x_down = Boolean.FALSE;
         capstone_arm_loc = "up";
+        right_stone_collector.setPosition(0.98);
+        left_stone_collector.setPosition(0.01);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         right_stone_collector_arm.setPosition(0);
         left_stone_collector_arm.setPosition(1);
     }
@@ -137,11 +148,6 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.a) foundation_mover.setPosition(0.57);
         if (gamepad1.b) foundation_mover.setPosition(0.05);
-
-//        if (gamepad2.a) right_stone_collector.setPosition(0.25);
-//        if (gamepad2.b) right_stone_collector.setPosition(0.75);
-//        if (gamepad2.x) right_stone_collector_arm.setPosition(0.25);
-//        if (gamepad2.y) right_stone_collector_arm.setPosition(0.75);
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
@@ -196,18 +202,6 @@ public class RobotCentric extends OpMode {
 
         }
         telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
-//        if(gamepad2.a) {
-//            left_stone_collector.setPosition(0);
-//            right_stone_collector.setPosition(0);
-//            left_stone_collector_arm.setPosition(0);
-//            right_stone_collector_arm.setPosition(0);
-//        }
-//        if(gamepad2.x) {
-//            left_stone_collector.setPosition(1);
-//            right_stone_collector.setPosition(1);
-//            left_stone_collector_arm.setPosition(1);
-//            right_stone_collector_arm.setPosition(1);
-//        }
         telemetry.update();
     }
 

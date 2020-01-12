@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 @TeleOp(name="Template", group="Iterative Opmode")
 @Disabled
-public class Template extends OpMode {
+public class ParkViaOars extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -62,6 +61,10 @@ public class Template extends OpMode {
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
+        right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
+        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -85,18 +88,6 @@ public class Template extends OpMode {
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
-
-
-        //Move collector_arm up
-        collector_arm.setPosition(0.77);
-
-
-
-
-
-
-
-        foundation_mover.setPosition(0);
     }
 
     /*
@@ -113,6 +104,8 @@ public class Template extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        left_stone_collector_arm.setPosition(0.74);
+        right_stone_collector_arm.setPosition(0.28);
     }
 
     /*
