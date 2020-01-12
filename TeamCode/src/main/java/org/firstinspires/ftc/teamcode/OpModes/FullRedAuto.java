@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
 //@Disabled
-public class FullBlueAuto extends OpMode {
+public class FullRedAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -78,8 +78,8 @@ public class FullBlueAuto extends OpMode {
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
         right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
         right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
-        left_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
-        left_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
+        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -177,34 +177,38 @@ public class FullBlueAuto extends OpMode {
      */
     @Override
     public void start() {
-        int stonePos = pip.stonePos;
+        int stonePos = 2-pip.stonePos;
         webcam.stopStreaming();
-        getStone(stonePos+3,675,(Object stone)->{
-            control.gotoPoint(new Transform(2254,770,Math.PI*0.5),true,0.35,0.85,60,(Object alphabet)->{
-                right_stone_collector_arm.setPosition(0.28);
+        getStone(stonePos+3,700,(Object stone)->{
+            control.gotoPoint(new Transform(-2254,770,-Math.PI*0.5),true,0.35,0.85,60,(Object alphabet)->{
+                left_stone_collector_arm.setPosition(0.74);
                 try {
                     Thread.sleep(273);
-                    right_stone_collector.setPosition(0.98);
+                    left_stone_collector.setPosition(0.01);
                     Thread.sleep(284);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                control.gotoPoint(new Transform(2254,550,Math.PI*0.5),true
+                control.gotoPoint(new Transform(-2254,550,-Math.PI*0.5),true
                         ,0.25,0.5,80,(Object abbcdea)->{
-                            right_stone_collector_arm.setPosition(0);
-                            getStone(stonePos,740,(Object stone1)->{
-                        control.gotoPoint(new Transform(2021,760,Math.PI*0.5),true,0.35,1,60,(Object alphabetcdefg)->{
-                            right_stone_collector_arm.setPosition(0.28);
+                            left_stone_collector_arm.setPosition(1);
+                            getStone(stonePos,676,(Object stone1)->{
+                        control.gotoPoint(new Transform(-2021,740,-Math.PI*0.5),true,0.35,1,60,(Object alphabetcdefg)->{
+                            left_stone_collector_arm.setPosition(0.74);
                             try {
                                 Thread.sleep(273);
-                                right_stone_collector.setPosition(0.98);
+                                left_stone_collector.setPosition(0.01);
                                 Thread.sleep(284);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            right_stone_collector_arm.setPosition(0);
-                            control.gotoPoint(new Transform(1000,700,Math.PI*0.5),true,0.25,0.75,40,(Object abcdefhlep)->0);
+                            left_stone_collector_arm.setPosition(1);
+                            control.gotoPoint(new Transform(-2021,520,-Math.PI*0.5),true,0.25,0.75,40,(Object abcdefhlep)->{
+                                control.gotoPoint(new Transform(-1000,520,-Math.PI*0.5),true,0.25,0.75,40,(Object icnEngilrsh)->0);
+                                return 0;
+                            });
                             return 0;
+
                         });
                         return 0;
                     });
@@ -250,20 +254,20 @@ public class FullBlueAuto extends OpMode {
 
     private void getStone(int stoneNum,double y, Lambda callback)
     {
-        control.gotoPoint(new Transform(Math.max(322-(200*stoneNum),-558),600,Math.PI*0.5),true,0.35,0.8,30,(Object obj)->{
-            right_stone_collector.setPosition(0.66);
-            right_stone_collector_arm.setPosition(0.28);
-            control.gotoPoint(new Transform(322-(200*stoneNum),y,Math.PI*0.5),true,0.35,0.5,20,(Object obj1)->{
+        control.gotoPoint(new Transform(Math.min(-322+(200*stoneNum),558),y-150,-Math.PI*0.5),true,0.35,0.8,30,(Object obj)->{
+            left_stone_collector.setPosition(0.43);
+            left_stone_collector_arm.setPosition(0.74);
+            control.gotoPoint(new Transform(-322+(200*stoneNum),y,-Math.PI*0.5),true,0.35,0.5,20,(Object obj1)->{
                 try {
-                    right_stone_collector_arm.setPosition(0.33);
+                    left_stone_collector_arm.setPosition(0.69);
                     Thread.sleep(200);
-                    right_stone_collector.setPosition(0.42);
+                    left_stone_collector.setPosition(0.56);
                     Thread.sleep(500);
+                    left_stone_collector_arm.setPosition(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                right_stone_collector_arm.setPosition(0);
-                control.gotoPoint(new Transform(322-(200*stoneNum),y-150,Math.PI*0.5),true,35,0.5,80,(Object abbcdea)->{
+                control.gotoPoint(new Transform(-322+(200*stoneNum),y-150,-Math.PI*0.5),true,35,0.5,80,(Object abbcdea)->{
                     callback.call(stoneNum);
                     return 0;
                 });

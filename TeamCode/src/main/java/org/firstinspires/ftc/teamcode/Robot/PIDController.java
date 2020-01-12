@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
-class PIDController
+public class PIDController
 {
     private double pGain;
     private double iGain;

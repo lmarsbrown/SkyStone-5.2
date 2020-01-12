@@ -29,7 +29,10 @@ public class FieldCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
-    //private Servo capstone_arm;
+    private Servo right_stone_collector_arm;
+    private Servo left_stone_collector_arm;
+
+    private Servo capstone_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -47,9 +50,11 @@ public class FieldCentric extends OpMode {
 
     private double positional_offset;
 
-    private Boolean x_down;
+    private Boolean x_down_gp2;
+    private Boolean x_down_gp1;
 
     private String capstone_arm_loc;
+    private String foundation_mover_loc;
 
     @Override
     public void init() {
@@ -60,9 +65,11 @@ public class FieldCentric extends OpMode {
         horizontal_extender    = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender      = hardwareMap.get(DcMotor.class, "vertical_ext");
 
-        collector_arm          = hardwareMap.get(Servo.class, "collector_arm");
-        foundation_mover       = hardwareMap.get(Servo.class, "Foundation_mover");
-        //capstone_arm           = hardwareMap.get(Servo.class, "Capstone_Arm");
+        collector_arm             = hardwareMap.get(Servo.class, "collector_arm");
+        foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
+        right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
+        capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector        = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector        = hardwareMap.get(CRServo.class, "inner_collector");
@@ -93,8 +100,12 @@ public class FieldCentric extends OpMode {
         foundation_mover.setPosition(0.05);
         //capstone_arm.setPosition(0);
 
-        x_down = Boolean.FALSE;
+        x_down_gp1 = Boolean.FALSE;
+        x_down_gp2 = Boolean.FALSE;
         capstone_arm_loc = "up";
+        foundation_mover_loc = "up";
+        right_stone_collector_arm.setPosition(0);
+        left_stone_collector_arm.setPosition(1);
     }
 
     @Override
@@ -132,8 +143,17 @@ public class FieldCentric extends OpMode {
             });
         }
 
-        if (gamepad1.a) foundation_mover.setPosition(0.57);
-        if (gamepad1.b) foundation_mover.setPosition(0.05);
+        if(gamepad1.x && foundation_mover_loc == "up" && !x_down_gp1) {
+            foundation_mover.setPosition(0.57);
+            foundation_mover_loc = "down";
+            x_down_gp1 = Boolean.TRUE;
+        } else if(gamepad1.x && foundation_mover_loc == "down" && !x_down_gp1) {
+            foundation_mover.setPosition(0.05);
+            foundation_mover_loc = "up";
+            x_down_gp1 = Boolean.TRUE;
+        } else if(!gamepad1.x && x_down_gp1) {
+            x_down_gp1 = Boolean.FALSE;
+        }
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
@@ -148,7 +168,7 @@ public class FieldCentric extends OpMode {
         else if (gamepad2.dpad_up   && limit_switch_front.getState()) horizontal_extender.setPower(gp2_percent_pwr * 0.5);
         else                                                          horizontal_extender.setPower(0);
 
-        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.5);
+        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.75);
         else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
         else                               vertical_extender.setPower(0);
 
@@ -165,17 +185,21 @@ public class FieldCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        /*if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
-            foundation_mover.setPosition(0.7);
+        if(gamepad2.x && capstone_arm_loc == "up" && !x_down_gp2) {
+            capstone_arm.setPosition(0.54);
             capstone_arm_loc = "down";
-            x_down = Boolean.TRUE;
-        } else if(gamepad2.x && capstone_arm_loc == "down" && !x_down) {
-            foundation_mover.setPosition(0);
+            x_down_gp2 = Boolean.TRUE;
+        } else if(gamepad2.x && capstone_arm_loc == "down" && !x_down_gp2) {
+            capstone_arm.setPosition(0.82);
             capstone_arm_loc = "up";
-            x_down = Boolean.TRUE;
-        } else if(!gamepad2.x && x_down) {
-            x_down = Boolean.FALSE;
-        }*/
+            x_down_gp2 = Boolean.TRUE;
+        } else if(!gamepad2.x && x_down_gp2) {
+            x_down_gp2 = Boolean.FALSE;
+        }
+
+        if(gamepad1.right_trigger > 0.9) {
+            positional_offset = rowboat.pos.r;
+        }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);

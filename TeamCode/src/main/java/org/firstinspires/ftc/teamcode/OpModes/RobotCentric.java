@@ -29,7 +29,10 @@ public class RobotCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
-    //private Servo capstone_arm;
+    private Servo right_stone_collector_arm;
+    private Servo left_stone_collector_arm;
+
+    private Servo capstone_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -58,9 +61,11 @@ public class RobotCentric extends OpMode {
         horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
 
-        collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
-        foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
-        //capstone_arm        = hardwareMap.get(Servo.class, "Capstone_Arm");
+        collector_arm             = hardwareMap.get(Servo.class, "collector_arm");
+        foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
+        right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
+        capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -87,10 +92,12 @@ public class RobotCentric extends OpMode {
 
         collector_arm.setPosition(0.72);
         foundation_mover.setPosition(0.05);
-        //capstone_arm.setPosition(0.82);
+        //capstone_arm.setPosition(0);
 
         x_down = Boolean.FALSE;
         capstone_arm_loc = "up";
+        right_stone_collector_arm.setPosition(0);
+        left_stone_collector_arm.setPosition(1);
     }
 
     @Override
@@ -131,6 +138,11 @@ public class RobotCentric extends OpMode {
         if (gamepad1.a) foundation_mover.setPosition(0.57);
         if (gamepad1.b) foundation_mover.setPosition(0.05);
 
+//        if (gamepad2.a) right_stone_collector.setPosition(0.25);
+//        if (gamepad2.b) right_stone_collector.setPosition(0.75);
+//        if (gamepad2.x) right_stone_collector_arm.setPosition(0.25);
+//        if (gamepad2.y) right_stone_collector_arm.setPosition(0.75);
+
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
             control.clearGoto();
@@ -142,7 +154,7 @@ public class RobotCentric extends OpMode {
         else if (gamepad2.dpad_up   && limit_switch_front.getState()) horizontal_extender.setPower(gp2_percent_pwr * 0.5);
         else                                                          horizontal_extender.setPower(0);
 
-        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.5);
+        if(gamepad2.left_stick_y > 0)      vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr * 0.75);
         else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
         else                               vertical_extender.setPower(0);
 
@@ -159,7 +171,7 @@ public class RobotCentric extends OpMode {
             outer_collector.setPower(0);
         }
 
-        /*if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
+        if(gamepad2.x && capstone_arm_loc == "up" && !x_down) {
             capstone_arm.setPosition(0.54);
             capstone_arm_loc = "down";
             x_down = Boolean.TRUE;
@@ -169,7 +181,7 @@ public class RobotCentric extends OpMode {
             x_down = Boolean.TRUE;
         } else if(!gamepad2.x && x_down) {
             x_down = Boolean.FALSE;
-        }*/
+        }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
@@ -184,6 +196,18 @@ public class RobotCentric extends OpMode {
 
         }
         telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
+//        if(gamepad2.a) {
+//            left_stone_collector.setPosition(0);
+//            right_stone_collector.setPosition(0);
+//            left_stone_collector_arm.setPosition(0);
+//            right_stone_collector_arm.setPosition(0);
+//        }
+//        if(gamepad2.x) {
+//            left_stone_collector.setPosition(1);
+//            right_stone_collector.setPosition(1);
+//            left_stone_collector_arm.setPosition(1);
+//            right_stone_collector_arm.setPosition(1);
+//        }
         telemetry.update();
     }
 
