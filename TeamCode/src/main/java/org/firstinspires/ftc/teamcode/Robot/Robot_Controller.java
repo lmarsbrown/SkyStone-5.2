@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Utils.Interval;
@@ -20,8 +22,10 @@ public class Robot_Controller {
     public boolean stat = false;
     private PIDController rPid = new PIDController(0.65,0.13,-1.8,0);
     private PIDController mPid = new PIDController(0.023,0,0.3,0);
-    private PIDController vPid = new PIDController(0.1,0,0,0.7);
-    private double pTPower = 0;
+    private PIDController vXPid = new PIDController(1,0,0,0.7);
+    private PIDController vYPid = new PIDController(-1,0,0,  0.7);
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private double ytigniny = 0;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -30,6 +34,7 @@ public class Robot_Controller {
         this.rbm = rbm;
         this.lbm = lbm;
         this.robot = robot;
+
     }
     public void setVec(Transform dir, double power)
     {
@@ -44,26 +49,35 @@ public class Robot_Controller {
     }
 
 
-    public void setVec(Transform dir, double power, boolean PID)
+    public void setVec(Transform tDir, double power, boolean PID)
     {
         if(PID)
         {
-            dir.normalize();
-            double sideMultiplierInverse                  = abs(dir.x + dir.y)+abs(dir.r);
+            tDir.normalize();
+            double sideMultiplierInverse                  = abs(tDir.x + tDir.y)+abs(tDir.r);
             double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
-            vPid.setGoal(power);
-            pTPower += vPid.update(robot.speed);
+            vXPid.setGoal(tDir.x*power);
+            vXPid.update(robot.speedAv.x);
+            vYPid.setGoal(tDir.y*power);
+            vYPid.update(robot.speedAv.y);
+            Transform dir = new Transform(vXPid.power,vYPid.power,0);
 
 
-            lfm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
-            rfm.setPower((-dir.y * sideMultiplier - dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
-            lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)*pTPower  );
-            rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)*pTPower  );
+
+
+            lfm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier + dir.r * sideMultiplier)  );
+            rfm.setPower((-dir.y * sideMultiplier - dir.x * sideMultiplier - dir.r * sideMultiplier)  );
+            lbm.setPower(  (-dir.y * sideMultiplier - dir.x * sideMultiplier + dir.r * sideMultiplier)  );
+            rbm.setPower( (-dir.y * sideMultiplier + dir.x * sideMultiplier - dir.r * sideMultiplier)  );
+            TelemetryPacket p = new TelemetryPacket();
+            //p.put("Target X",tDir.x);
+            p.put("Target Y",tDir.y);
+            //p.put("Real X",robot.steps.x);
+            p.put("Real Y",robot.pos.y);
+            //p.put("X Power",vXPid.power);
+            p.put("Y Power",vYPid.power);
+            dashboard.sendTelemetryPacket(p);
         }
-    }
-    public void resetVecPid(double power)
-    {
-        vPid.reset(power);
     }
 
 

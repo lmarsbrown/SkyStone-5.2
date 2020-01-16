@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Utils.*;
+import org.firstinspires.ftc.teamcode.Utils.Lambda;
+import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 public class Robot_Localizer {
     //Var init
@@ -20,7 +22,7 @@ public class Robot_Localizer {
     public String telemetryA = "";
     public String telemetryB = "";
     public String telemetryC = "";
-    public double speed = 0;
+    public Transform speedAv = new Transform(0,0,0);
     private double calibrationConstant = 1;
     private double calibrationCount = 1;
     private boolean calibrating = false;
@@ -61,7 +63,7 @@ public class Robot_Localizer {
         double t = runtime.milliseconds();
         double timePassed = t-pTime;
         pTime = t;
-        speed = (steps.getLength()/timePassed)*2;
+        speedAv = getVSteps();
 
 
 
@@ -128,6 +130,9 @@ public class Robot_Localizer {
         double rStep = ((rPosToastal.x - rPosToastal.y) / (encDist)) - pPos.r;
         pPos = new Transform(rPosToastal.r, 0.5 * (rPosToastal.x + rPosToastal.y), (rPosToastal.x - rPosToastal.y) / (encDist));
         return new Transform(sStep, fStep, rStep);
+    }
+    private Transform getVSteps() {
+        return new Transform(((DcMotorEx)encRight).getVelocity() * countsPerRev * wheelCirc, (((DcMotorEx)encLeft).getVelocity() * countsPerRev * wheelCirc), ((DcMotorEx)encSide).getVelocity() * countsPerRev * wheelCirc);
     }
 
     private Transform getArc(Transform steps) {
