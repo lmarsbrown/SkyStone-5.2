@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -9,13 +9,16 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.*;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
+import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Field-Centric Driving", group="Iterative Opmode")
+@TeleOp
 //@Disabled
-public class FieldCentric extends OpMode {
+public class WorseFieldCentric extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -51,7 +54,7 @@ public class FieldCentric extends OpMode {
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
 
-    private double positional_offset;
+    private Boolean x_down;
 
     private Boolean x_down_gp2;
     private Boolean x_down_gp1;
@@ -59,14 +62,21 @@ public class FieldCentric extends OpMode {
     private String capstone_arm_loc;
     private String foundation_mover_loc;
 
+    private double positional_offset;
+
+    BNO055IMU imu;
+
+    Orientation angles;
+    Acceleration gravity;
+
     @Override
     public void init() {
-        leftFront              = hardwareMap.get(DcMotor.class, "left_front");
-        rightFront             = hardwareMap.get(DcMotor.class, "right_front");
-        leftBack               = hardwareMap.get(DcMotor.class, "left_back");
-        rightBack              = hardwareMap.get(DcMotor.class, "right_back");
-        horizontal_extender    = hardwareMap.get(DcMotor.class, "horizontal_ext");
-        vertical_extender      = hardwareMap.get(DcMotor.class, "vertical_ext");
+        leftFront           = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront          = hardwareMap.get(DcMotor.class, "right_front");
+        leftBack            = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack           = hardwareMap.get(DcMotor.class, "right_back");
+        horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
+        vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
 
         collector_arm             = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
@@ -76,13 +86,11 @@ public class FieldCentric extends OpMode {
         left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
         capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
 
-        outer_collector        = hardwareMap.get(CRServo.class, "outer_collector");
-        inner_collector        = hardwareMap.get(CRServo.class, "inner_collector");
+        outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
+        inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
 
-        limit_switch_back      = hardwareMap.get(DigitalChannel.class, "limit_switch1");
-        limit_switch_front     = hardwareMap.get(DigitalChannel.class, "limit_switch2");
-
-        positional_offset      = 0;
+        limit_switch_back   = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        limit_switch_front  = hardwareMap.get(DigitalChannel.class, "limit_switch2");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -109,6 +117,7 @@ public class FieldCentric extends OpMode {
         x_down_gp2 = Boolean.FALSE;
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
+        capstone_arm_loc = "up";
         right_stone_collector.setPosition(0.98);
         left_stone_collector.setPosition(0.01);
         try {
@@ -118,6 +127,7 @@ public class FieldCentric extends OpMode {
         }
         right_stone_collector_arm.setPosition(0);
         left_stone_collector_arm.setPosition(1);
+        positional_offset = 0;
     }
 
     @Override
@@ -132,15 +142,8 @@ public class FieldCentric extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-        TelemetryPacket p = new TelemetryPacket();
-        p.put("Le;ft:::::::",leftBack.getCurrentPosition());
-        p.put("Ri:gh:t::::::::",rightBack.getCurrentPosition());
-        p.put("Si:::d:e::::::::::::::::",rightFront.getCurrentPosition());
-
-        control.dashboard.sendTelemetryPacket(p);
-
-
         robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        robot_vector.rotate(new Transform(0, 0, 0), positional_offset - rowboat.pos.r);
 
         if (gamepad1.left_bumper) gp1_percent_pwr = 0.25;
         else if (gamepad1.right_bumper) gp1_percent_pwr = 0.35;
@@ -180,8 +183,6 @@ public class FieldCentric extends OpMode {
             control.clearGoto();
         }
 
-        robot_vector.rotate(new Transform(0, 0, 0), positional_offset - rowboat.pos.r);
-
         if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
 
         if      (gamepad2.dpad_down && limit_switch_back.getState())  horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
@@ -192,14 +193,14 @@ public class FieldCentric extends OpMode {
         else if(gamepad2.left_stick_y < 0) vertical_extender.setPower(-gamepad2.left_stick_y * gp2_percent_pwr);
         else                               vertical_extender.setPower(0);
 
-        if(gamepad2.y) {
-            collector_arm.setPosition(0.72);
-            inner_collector.setPower(1);
-            outer_collector.setPower(1);
-        } else if(gamepad2.a) {
+        if(gamepad2.right_stick_y > 0.1) {
             collector_arm.setPosition(0.403);
-            inner_collector.setPower(-1);
-            outer_collector.setPower(-1);
+            inner_collector.setPower(-gamepad2.right_stick_y);
+            outer_collector.setPower(-gamepad2.right_stick_y);
+        } else if(gamepad2.right_stick_y < -0.1) {
+            collector_arm.setPosition(0.72);
+            inner_collector.setPower(-gamepad2.right_stick_y);
+            outer_collector.setPower(-gamepad2.right_stick_y);
         } else {
             inner_collector.setPower(0);
             outer_collector.setPower(0);

@@ -24,7 +24,7 @@ public class Robot_Controller {
     private PIDController mPid = new PIDController(0.023,0,0.3,0);
     private PIDController vXPid = new PIDController(1,0,0,0.7);
     private PIDController vYPid = new PIDController(-1,0,0,  0.7);
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    public FtcDashboard dashboard = FtcDashboard.getInstance();
     private double ytigniny = 0;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
