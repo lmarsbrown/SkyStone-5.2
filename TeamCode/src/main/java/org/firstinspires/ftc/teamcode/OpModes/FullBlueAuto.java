@@ -250,10 +250,10 @@ public class FullBlueAuto extends OpMode {
 
     private void getStone(int stoneNum,double y, Lambda callback)
     {
-        control.gotoPoint(new Transform(Math.max(322-(200*stoneNum),-558),600,Math.PI*0.5),true,0.35,0.8,30,(Object obj)->{
+        control.gotoPoint(new Transform(Math.max(322-(200*(stoneNum)),-558),600,Math.PI*0.5),true,0.35,0.8,30,(Object obj)->{
             right_stone_collector.setPosition(0.66);
             right_stone_collector_arm.setPosition(0.28);
-            control.gotoPoint(new Transform(322-(200*stoneNum),y,Math.PI*0.5),true,0.35,0.5,20,(Object obj1)->{
+            control.gotoPoint(new Transform(322-(200*(stoneNum)),y,Math.PI*0.5),true,0.35,0.5,20,(Object obj1)->{
                 try {
                     right_stone_collector_arm.setPosition(0.33);
                     Thread.sleep(200);
@@ -263,7 +263,7 @@ public class FullBlueAuto extends OpMode {
                     e.printStackTrace();
                 }
                 right_stone_collector_arm.setPosition(0);
-                control.gotoPoint(new Transform(322-(200*stoneNum),y-150,Math.PI*0.5),true,35,0.5,80,(Object abbcdea)->{
+                control.gotoPoint(new Transform(322-(200*(stoneNum)),y-150,Math.PI*0.5),true,35,0.5,80,(Object abbcdea)->{
                     callback.call(stoneNum);
                     return 0;
                 });

@@ -22,7 +22,7 @@ public class Robot_Localizer {
     public String telemetryA = "";
     public String telemetryB = "";
     public String telemetryC = "";
-    public Transform speedAv = new Transform(0,0,0);
+    public Transform speed = new Transform(0,0,0);
     private double calibrationConstant = 1;
     private double calibrationCount = 1;
     private boolean calibrating = false;
@@ -56,14 +56,16 @@ public class Robot_Localizer {
         telemetryB = String.valueOf(encRight.getCurrentPosition());
         telemetryC = String.valueOf(encSide.getCurrentPosition());
         //Getting step vars
-        steps = getSteps();
+        steps = getSteps(getRPosTotal());
 
 
 
         double t = runtime.milliseconds();
         double timePassed = t-pTime;
         pTime = t;
-        speedAv = getVSteps();
+        speed = getVSteps();
+        speed = new Transform(speed.r,0.5 * (speed.x + speed.y),((speed.x - speed.y) / (encDist))*calibrationConstant);
+
 
 
 
@@ -122,9 +124,7 @@ public class Robot_Localizer {
     /**
      * REVIEW
      */
-    private Transform getSteps() {
-        //Calculating step vars
-        Transform rPosToastal = getRPosTotal();
+    private Transform getSteps(Transform rPosToastal) {
         double fStep = 0.5 * (rPosToastal.x + rPosToastal.y) - pPos.y;
         double sStep = rPosToastal.r - pPos.x;
         double rStep = ((rPosToastal.x - rPosToastal.y) / (encDist)) - pPos.r;

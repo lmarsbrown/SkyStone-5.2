@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,7 +12,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
@@ -128,6 +135,19 @@ public class WorseFieldCentric extends OpMode {
         right_stone_collector_arm.setPosition(0);
         left_stone_collector_arm.setPosition(1);
         positional_offset = 0;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 
     @Override
@@ -136,14 +156,16 @@ public class WorseFieldCentric extends OpMode {
 
     @Override
     public void start() {
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         runtime.reset();
     }
 
     @Override
     public void loop() {
+        Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         rowboat.relocalize();
         robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-        robot_vector.rotate(new Transform(0, 0, 0), positional_offset - rowboat.pos.r);
+        robot_vector.rotate(new Transform(0, 0, 0), imuAngles.firstAngle-positional_offset);
 
         if (gamepad1.left_bumper) gp1_percent_pwr = 0.25;
         else if (gamepad1.right_bumper) gp1_percent_pwr = 0.35;
@@ -219,12 +241,11 @@ public class WorseFieldCentric extends OpMode {
         }
 
         if(gamepad1.right_trigger > 0.9) {
-            positional_offset = rowboat.pos.r;
+            positional_offset = imuAngles.firstAngle;
         }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
-        telemetry.addData("Rotation", rowboat.pos.r);
 
         if(saved_robot_pos != null)
         {
@@ -236,6 +257,11 @@ public class WorseFieldCentric extends OpMode {
         }
         telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
         telemetry.update();
+        TelemetryPacket p = new TelemetryPacket();
+        p.put("Rotation1",imuAngles.firstAngle);
+        p.put("Rotation2",imuAngles.secondAngle);
+        p.put("Rotation3",imuAngles.thirdAngle);
+        control.dashboard.sendTelemetryPacket(p);
     }
 
     @Override

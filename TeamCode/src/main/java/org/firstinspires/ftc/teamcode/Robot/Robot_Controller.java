@@ -23,9 +23,11 @@ public class Robot_Controller {
     private PIDController rPid = new PIDController(0.65,0.13,-1.8,0);
     private PIDController mPid = new PIDController(0.023,0,0.3,0);
     private PIDController vXPid = new PIDController(1,0,0,0.7);
-    private PIDController vYPid = new PIDController(-1,0,0,  0.7);
+    private PIDController vYPid = new PIDController(1,0,0,  0.7);
+    private PIDController vRPid = new PIDController(-1,0,0,  0);
     public FtcDashboard dashboard = FtcDashboard.getInstance();
     private double ytigniny = 0;
+    private boolean flip =  false;
 
     public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot)
     {
@@ -36,8 +38,19 @@ public class Robot_Controller {
         this.robot = robot;
 
     }
-    public void setVec(Transform dir, double power)
+    public Robot_Controller(DcMotor rfm, DcMotor lfm, DcMotor rbm, DcMotor lbm,  Robot_Localizer robot,boolean flipX)
     {
+        this.rfm = rfm;
+        this.lfm = lfm;
+        this.rbm = rbm;
+        this.lbm = lbm;
+        this.robot = robot;
+        this.flip = flipX;
+
+    }
+    public void setVec(Transform tDir, double power)
+    {
+        Transform dir = tDir.clone();
         dir.normalize();
         double sideMultiplierInverse                   = abs(dir.x + dir.y)+abs(dir.r);
         double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
@@ -49,18 +62,25 @@ public class Robot_Controller {
     }
 
 
-    public void setVec(Transform tDir, double power, boolean PID)
+    public void setVec(Transform rDir, double power, boolean PID)
     {
         if(PID)
         {
+            Transform tDir = rDir.clone();
             tDir.normalize();
             double sideMultiplierInverse                  = abs(tDir.x + tDir.y)+abs(tDir.r);
             double sideMultiplier = min(sideMultiplierInverse, 1) / sideMultiplierInverse;
+            Transform speed = robot.speed.clone();
             vXPid.setGoal(tDir.x*power);
-            vXPid.update(robot.speedAv.x);
+            vXPid.update(speed.x*0.002);
             vYPid.setGoal(tDir.y*power);
-            vYPid.update(robot.speedAv.y);
-            Transform dir = new Transform(vXPid.power,vYPid.power,0);
+            vYPid.update(speed.y*0.002);
+            vRPid.setGoal(tDir.r*power);
+            vRPid.update(speed.r/(2*Math.PI));
+            Transform dir = new Transform(vXPid.power,vYPid.power,vRPid.power);
+
+            dir.normalize();
+
 
 
 
@@ -73,7 +93,7 @@ public class Robot_Controller {
             //p.put("Target X",tDir.x);
             p.put("Target Y",tDir.y);
             //p.put("Real X",robot.steps.x);
-            p.put("Real Y",robot.pos.y);
+            p.put("Real Y",robot.speed.y*0.002);
             //p.put("X Power",vXPid.power);
             p.put("Y Power",vYPid.power);
             dashboard.sendTelemetryPacket(p);
@@ -172,6 +192,11 @@ public class Robot_Controller {
     {
         mPid.reset(0);
         rPid.reset(0);
+        if(flip)
+        {
+            point.x *= -1;
+            point.r *= -1;
+        }
         double startR = robot.pos.r;
         Interval callbackThread = new Interval((Object obj)->{
             callback.call(new Object());
