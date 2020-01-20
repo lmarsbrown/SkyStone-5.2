@@ -460,14 +460,13 @@ public class FullRedAuto extends OpMode {
      */
     @Override
     public void start() {
-        int stonePos = pip.stonePos;
+        int stonePos = 2-pip.stonePos;
         webcam.stopStreaming();
-        getStone(stonePos+3,675,(Object stone)->{
-            control.gotoPoint(new Transform(2254,770,Math.PI*0.5),true,0.35,0.85,60,(Object alphabet)->{
-                left_stone_collector_arm.setPosition(0.74);
+        getStone(stonePos+3,700,(Object stone)->{
+            control.gotoPoint(new Transform(2254,770,Math.PI*0.5),true,0.35,0.85,100,(Object alphabet)->{
+                left_stone_collector_arm.setPosition(0.84);
+                left_stone_collector.setPosition(0.01);
                 try {
-                    Thread.sleep(273);
-                    left_stone_collector.setPosition(0.01);
                     Thread.sleep(284);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -475,9 +474,9 @@ public class FullRedAuto extends OpMode {
                 control.gotoPoint(new Transform(2254,550,Math.PI*0.5),true
                         ,0.25,0.5,80,(Object abbcdea)->{
                             left_stone_collector_arm.setPosition(1);
-                            getStone(stonePos,740,(Object stone1)->{
-                                control.gotoPoint(new Transform(2021,760,Math.PI*0.5),true,0.35,1,60,(Object alphabetcdefg)->{
-                                    left_stone_collector_arm.setPosition(0.74);
+                            getStone(stonePos,670,(Object stone1)->{
+                                control.gotoPoint(new Transform(2021,760,Math.PI*0.5),true,0.35,1,100,(Object alphabetcdefg)->{
+                                    left_stone_collector_arm.setPosition(0.84);
                                     try {
                                         Thread.sleep(273);
                                         left_stone_collector.setPosition(0.01);
@@ -486,7 +485,10 @@ public class FullRedAuto extends OpMode {
                                         e.printStackTrace();
                                     }
                                     left_stone_collector_arm.setPosition(1);
-                                    control.gotoPoint(new Transform(1000,700,Math.PI*0.5),true,0.25,0.85,40,(Object abcdefhlep)->0);
+                                    control.gotoPoint(new Transform(2021,590,Math.PI*0.5),true,0.25,0.85,50,(Object afjrj)->{
+                                        control.gotoPoint(new Transform(1000,590,Math.PI*0.5),true,0.5,0.85,150,(Object abcdefhlep)->0);
+                                        return 0;
+                                    });
                                     return 0;
                                 });
                                 return 0;
@@ -529,14 +531,15 @@ public class FullRedAuto extends OpMode {
      */
     @Override
     public void stop() {
+        webcam.stopStreaming();
     }
 
     private void getStone(int stoneNum,double y, Lambda callback)
     {
-        control.gotoPoint(new Transform(322-(200*(stoneNum-2)),600,Math.PI*0.5),true,0.35,0.8,30,(Object obj)->{
+        control.gotoPoint(new Transform(Math.max(350-(200*(stoneNum)),-558),y-150,Math.PI*0.5),true,0.25,0.8,60,-Math.PI*0.5,(Object obj)->{
             left_stone_collector.setPosition(0.43);
             left_stone_collector_arm.setPosition(0.74);
-            control.gotoPoint(new Transform(322-(200*(stoneNum-2)),y,Math.PI*0.5),true,0.35,0.5,20,(Object obj1)->{
+            control.gotoPoint(new Transform(350-(200*(stoneNum)),y,Math.PI*0.5),true,0.35,0.5,35,(Object obj1)->{
                 try {
                     left_stone_collector_arm.setPosition(0.69);
                     Thread.sleep(200);
@@ -546,7 +549,7 @@ public class FullRedAuto extends OpMode {
                     e.printStackTrace();
                 }
                 left_stone_collector_arm.setPosition(1);
-                control.gotoPoint(new Transform(322-(200*(stoneNum-2)),y-150,Math.PI*0.5),true,0.35,0.5,80,(Object abbcdea)->{
+                control.gotoPoint(new Transform(350-(200*(stoneNum)),y-150,Math.PI*0.5),true,0.35,0.5,80,(Object abbcdea)->{
                     callback.call(stoneNum);
                     return 0;
                 });

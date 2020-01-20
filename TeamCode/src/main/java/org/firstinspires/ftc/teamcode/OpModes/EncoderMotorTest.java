@@ -87,7 +87,7 @@ public class EncoderMotorTest extends OpMode {
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
-        vertCont = new MotorController(vertical_extender,new PIDController(0.002,0.0001,0.002,0));
+        vertCont = new MotorController(vertical_extender,new PIDController(0.0051,0.001,0.00423,0));
 
         going_to_pt = false;
 
@@ -106,7 +106,7 @@ public class EncoderMotorTest extends OpMode {
     @Override
     public void start() {
         start = vertical_extender.getCurrentPosition();
-        vertCont.setTarget(1302,true);
+        vertCont.setTarget(-1302,true);
         /*
         vertical_extender.setTargetPosition(1302);
 

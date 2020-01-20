@@ -20,8 +20,8 @@ public class Robot_Controller {
     public Interval inter;
     private double doneCount = 0;
     public boolean stat = false;
-    private PIDController rPid = new PIDController(0.65,0.13,-1.8,0);
-    private PIDController mPid = new PIDController(0.023,0,0.3,0);
+    private PIDController rPid = new PIDController(0.55,0.13,3,0);
+    private PIDController mPid = new PIDController(0.017,0,0.4,0);
     private PIDController vXPid = new PIDController(1,0,0,0.7);
     private PIDController vYPid = new PIDController(1,0,0,  0.7);
     private PIDController vRPid = new PIDController(-1,0,0,  0);
@@ -139,7 +139,7 @@ public class Robot_Controller {
         double goalDist = Math.hypot(robot.pos.x-point.x,robot.pos.y-point.y);
         double fPower = -mPid.update(goalDist);
         double rOffset = Math.PI+((Math.atan2(dir.y,dir.x)-((robot.pos.r%(Math.PI))%-(Math.PI))));
-        dir.r = (startR-robot.pos.r)*Math.min(fPower,1);
+        dir.r = (startR-robot.pos.r)*Math.max(Math.min(fPower,1),0);
 
         if(goalDist<slop||stat)
         {
@@ -204,6 +204,25 @@ public class Robot_Controller {
         },1);
         robot.onLocalize = (q)->{
             double count = gotoPointLoop(point,end,minSpeed,maxSpeed,slop,startR);
+            if(count>10||(count>0&&!end)){robot.onLocalize = null;callbackThread.start();}
+            return 0;
+        };
+    }
+    public void gotoPoint(Transform point, boolean end,double minSpeed, double maxSpeed, double slop,double posToHold, Lambda callback)
+    {
+        mPid.reset(0);
+        rPid.reset(0);
+        if(flip)
+        {
+            point.x *= -1;
+            point.r *= -1;
+        }
+        Interval callbackThread = new Interval((Object obj)->{
+            callback.call(new Object());
+            return 1;
+        },1);
+        robot.onLocalize = (q)->{
+            double count = gotoPointLoop(point,end,minSpeed,maxSpeed,slop,posToHold);
             if(count>10||(count>0&&!end)){robot.onLocalize = null;callbackThread.start();}
             return 0;
         };

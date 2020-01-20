@@ -140,7 +140,7 @@ public class RobotCentric extends OpMode {
 
         if (gamepad1.x && saved_robot_pos != null && !going_to_pt) {
             going_to_pt = true;
-            control.gotoPoint(saved_robot_pos, false, 0.1,0.7,20, (Object obj) -> {
+            control.gotoPoint(saved_robot_pos, true, 0.1,0.7,20, (Object obj) -> {
                 going_to_pt = false;
                 return 0;
             });
@@ -154,7 +154,7 @@ public class RobotCentric extends OpMode {
             control.clearGoto();
         }
 
-        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr,true);
+        if (!going_to_pt) control.setVec(robot_vector, gp1_percent_pwr);
 
         if      (gamepad2.dpad_down && limit_switch_back.getState())  horizontal_extender.setPower(-gp2_percent_pwr * 0.5);
         else if (gamepad2.dpad_up   && limit_switch_front.getState()) horizontal_extender.setPower(gp2_percent_pwr * 0.5);
