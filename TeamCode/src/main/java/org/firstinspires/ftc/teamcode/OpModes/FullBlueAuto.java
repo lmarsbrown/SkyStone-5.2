@@ -457,7 +457,7 @@ public class FullBlueAuto extends OpMode {
     public void start() {
         int stonePos = pip.stonePos;
         webcam.stopStreaming();
-        getStone(stonePos+3,675,185,(Object stone)->{
+        getStone(stonePos+3,690,185,(Object stone)->{
             control.gotoPoint(new Transform(2254,770,Math.PI*0.5),true,0.35,0.85,100,(Object alphabet)->{
                 right_stone_collector_arm.setPosition(0.25);
                 right_stone_collector.setPosition(0.98);

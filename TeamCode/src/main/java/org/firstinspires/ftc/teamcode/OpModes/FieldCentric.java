@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robot.*;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Field-Centric Driving", group="Iterative Opmode")
+@TeleOp(name="Nico's Field-Centric Driving", group="Iterative Opmode")
 //@Disabled
 public class FieldCentric extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -133,9 +133,9 @@ public class FieldCentric extends OpMode {
     public void loop() {
         rowboat.relocalize();
         TelemetryPacket p = new TelemetryPacket();
-        p.put("Le;ft:::::::",leftBack.getCurrentPosition());
-        p.put("Ri:gh:t::::::::",rightBack.getCurrentPosition());
-        p.put("Si:::d:e::::::::::::::::",rightFront.getCurrentPosition());
+        p.put("Left",leftBack.getCurrentPosition());
+        p.put("Right",rightBack.getCurrentPosition());
+        p.put("Side",rightFront.getCurrentPosition());
 
         control.dashboard.sendTelemetryPacket(p);
 

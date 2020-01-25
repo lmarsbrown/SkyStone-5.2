@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp
+@TeleOp(name = "Cannon's Field-Centric Driving")
 //@Disabled
 public class WorseFieldCentric extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -258,9 +258,9 @@ public class WorseFieldCentric extends OpMode {
         telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
         telemetry.update();
         TelemetryPacket p = new TelemetryPacket();
-        p.put("Rotation1",imuAngles.firstAngle);
-        p.put("Rotation2",imuAngles.secondAngle);
-        p.put("Rotation3",imuAngles.thirdAngle);
+        p.put("Rotation 1",imuAngles.firstAngle);
+        p.put("Rotation 2",imuAngles.secondAngle);
+        p.put("Rotation 3",imuAngles.thirdAngle);
         control.dashboard.sendTelemetryPacket(p);
     }
 
