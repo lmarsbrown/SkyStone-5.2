@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Servo Position Finder", group="Iterative Opmode")
-//@Disabled
+@Disabled
+@Deprecated
 public class ServoPositionFinder extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

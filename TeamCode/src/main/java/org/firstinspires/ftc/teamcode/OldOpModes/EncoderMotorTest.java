@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,14 +9,17 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Robot.MotorController;
+import org.firstinspires.ftc.teamcode.Robot.PIDController;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Template", group="Iterative Opmode")
+@TeleOp(name="Encoder Motor Test", group="Iterative Opmode")
 @Disabled
-public class ParkViaOars extends OpMode {
+@Deprecated
+public class EncoderMotorTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -31,10 +34,6 @@ public class ParkViaOars extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
-    private Servo right_stone_collector;
-    private Servo right_stone_collector_arm;
-    private Servo left_stone_collector;
-    private Servo left_stone_collector_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -49,6 +48,9 @@ public class ParkViaOars extends OpMode {
 
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
+    private MotorController vertCont;
+
+    private int start = 0;
 
     @Override
     public void init() {
@@ -61,10 +63,6 @@ public class ParkViaOars extends OpMode {
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
-        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
-        right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
-        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
-        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -79,15 +77,22 @@ public class ParkViaOars extends OpMode {
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        vertical_extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical_extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
+        vertCont = new MotorController(vertical_extender,new PIDController(0.0051,0.001,0.00423,0));
+
         going_to_pt = false;
+
     }
 
     /*
@@ -95,7 +100,6 @@ public class ParkViaOars extends OpMode {
      */
     @Override
     public void init_loop() {
-
     }
 
     /*
@@ -103,9 +107,13 @@ public class ParkViaOars extends OpMode {
      */
     @Override
     public void start() {
+        start = vertical_extender.getCurrentPosition();
+        vertCont.setTarget(-1302,true);
+        /*
+        vertical_extender.setTargetPosition(1302);
+
+        vertical_extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
         runtime.reset();
-        left_stone_collector_arm.setPosition(0.74);
-        right_stone_collector_arm.setPosition(0.28);
     }
 
     /*
@@ -114,7 +122,8 @@ public class ParkViaOars extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
-
+        vertCont.updateController();
+        telemetry.addData("ENCODER", vertical_extender.getCurrentPosition());
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",rowboat.pos.r);

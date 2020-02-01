@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -26,9 +26,10 @@ import org.firstinspires.ftc.teamcode.Utils.VuLambda;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-@Autonomous(name="1 Stone Red", group="Iterative Opmode")
+@Autonomous(name="1 Stone Blue", group="Iterative Opmode")
 @Disabled
-public class VuforiaTestDriveRed extends OpMode {
+@Deprecated
+public class VuforiaTestDriveBlue extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -102,7 +103,8 @@ public class VuforiaTestDriveRed extends OpMode {
         //Seting vuforia params
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AXD7Z8n/////AAABmeUpWxkr4UwCn1T5SeLkoYsYLhZbVtkUUiH3anbbVLB6LppfJSGm+AVOaffZudIRjtBpgZG1MjRa4sz1YZPRUf/Tv9x0HQrm2+GfkHn2fi/Zu1GRH873rFjxnFnUIOar2q48nPytFs6n4/P4tkUMwBSmlffeJxcxhBSMnFgH5AXrTL7F+WAerdDGlFVGlHJgnbkMJWyFwsSrhkSm2TD2vnsiZ2PdnKhUPL3FLxHPTUh+b39PTlmW4Yzws1jDA+Xfp4lvn+E7p4g+fY/eAA3gzcRQP4XyhBYjACJaXOtatxclSNxBU5xyGN+L1cM5hQ/6d5UJBYQeQdV5GFzv0hd5xEYMCKcZplda+0y1f6+QG2Z6";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        //parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraName = webcamName;
         parameters.addWebcamCalibrationFile("Calibration");
 
 
@@ -114,9 +116,6 @@ public class VuforiaTestDriveRed extends OpMode {
         //Move collector_arm up
         collector_arm.setPosition(0.77);
         capstone_arm.setPosition(1);
-
-
-
     }
 
     /*
@@ -134,35 +133,32 @@ public class VuforiaTestDriveRed extends OpMode {
         collector_arm.setPosition(0.72);
         skystoneTrackables.activate();
 
-        control.gotoPoint(new Transform(0,-300,0),true,0.1,0.7,20,(Object obj)->{
+        control.gotoPoint(new Transform(-230,-300,0),true,0.1,0.7,20,(Object obj)->{
                 detect(targetElement,(block)->{
                     OpenGLMatrix pose = block.getFtcCameraFromTarget();
-                    Transform stoneAPos = new Transform( rowboat.pos.x+175-pose.getRow(1).get(3),-100-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
+                    Transform stoneAPos = new Transform( rowboat.pos.x+200-pose.getRow(1).get(3),-300-pose.getRow(0).get(3)+this.rowboat.pos.y,0);
                     control.gotoPoint(stoneAPos,true,0.1,0.7,20,(Object o)->{
-                        control.gotoPoint(new Transform(stoneAPos.x,stoneAPos.y-200,0),true,0.1,0.7,20,(Object asdehteherh)-> {
-                            collector_arm.setPosition(0.403);
-                            inner_collector.setPower(-0.7);
-                            outer_collector.setPower(-0.7);
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        collector_arm.setPosition(0.403);
+                        inner_collector.setPower(-0.7);
+                        outer_collector.setPower(-0.7);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                            inner_collector.setPower(0);
-                            outer_collector.setPower(0);
+                        inner_collector.setPower(0);
+                        outer_collector.setPower(0);
 
-                            control.gotoPoint(new Transform(rowboat.pos.x, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object yyyyyyyyy) -> {
-                                control.gotoPoint(new Transform(1333, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object acbmgfdhjkilmnozqrtwrvwyxzed) -> {
-                                    collector_arm.setPosition(0.72);
-                                    control.gotoPoint(new Transform(888, -650, Math.PI * 0.5), true, 0.1,0.7,20, (Object sgerhgseg) -> 0);
+                         control.gotoPoint(new Transform( rowboat.pos.x,-650,-Math.PI*0.5),true,0.1,0.7,20,(Object yyyyyyyyy)->{
+                             control.gotoPoint(new Transform( -1111,-650,-Math.PI*0.5),true,0.1,0.7,20,(Object acbmgfdhjkilmnozqrtwrvwyxzed)->{
+                                 collector_arm.setPosition(0.72);
+                                 control.gotoPoint(new Transform( -700,-650,-Math.PI*0.5),true,0.1,0.7,20,(Object sgerhgseg)->0);
 
-                                    return 0;
-                                });
-                                return 0;
-                            });
-                            return 0;
-                        });
+                                 return  0;
+                             });
+                             return  0;
+                         });
                         return 0;
                     });
                     //control.gotoPoint(new Transform(pose.getRow(0).get(3),200-pose.getRow(2).get(3),0),true);
@@ -181,11 +177,6 @@ public class VuforiaTestDriveRed extends OpMode {
     public void loop() {
 
         if(!limit_switch_back.getState())horizontal_extender.setPower(0);
-        if(!limit_switch_front.getState()){
-            horizontal_extender.setPower(0);
-            control.clearGoto();
-            control.setVec(new Transform(0,0,0),0);
-        }
 
         rowboat.relocalize();
         telemetry.addData("X Position", rowboat.pos.x);
@@ -230,12 +221,12 @@ public class VuforiaTestDriveRed extends OpMode {
         AtomicBoolean stapd = new AtomicBoolean(false);
         inter = new Interval((obj)->{
             telemetry.addData("",stapd.get());
-            if((runtime.milliseconds()-start)%3000<100 && !stapd.get()&&runtime.milliseconds()>200)
+            if((runtime.milliseconds()-start)%2000<100 && !stapd.get()&&runtime.milliseconds()>200)
             {
                 stapd.set(true);
-                control.gotoPoint(new Transform(rowboat.pos.x-200,rowboat.pos.y,0),true,0.1,0.7,20,(Object yyyyyyhelpnoureversecard)->{return 0;});
+                control.gotoPoint(new Transform(rowboat.pos.x+250,rowboat.pos.y,0),true,0.1,0.7,20,(Object yyyyyyhelpnoureversecard)->{return 0;});
             }
-            else if((runtime.milliseconds()-start)%3000>100)
+            else if((runtime.milliseconds()-start)%2000>100)
             {
                 stapd.set(false);
             }

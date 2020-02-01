@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -51,7 +51,8 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="DinghyOpmode", group="Iterative Opmode")
-//@Disabled
+@Disabled
+@Deprecated
 public class DinghyOpmode extends OpMode
 {
     // Declare OpMode members.

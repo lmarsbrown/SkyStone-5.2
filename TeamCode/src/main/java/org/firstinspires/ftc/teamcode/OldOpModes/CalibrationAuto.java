@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 
 @TeleOp(name="CalibrationAuto", group="Iterative Opmode")
 @Disabled
+@Deprecated
 public class CalibrationAuto extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

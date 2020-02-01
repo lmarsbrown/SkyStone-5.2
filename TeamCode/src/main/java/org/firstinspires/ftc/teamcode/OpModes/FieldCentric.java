@@ -109,6 +109,13 @@ public class FieldCentric extends OpMode {
         x_down_gp2 = Boolean.FALSE;
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
+        right_stone_collector_arm.setPosition(0.1);
+        left_stone_collector_arm.setPosition(0.9);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         right_stone_collector.setPosition(0.98);
         left_stone_collector.setPosition(0.01);
         try {
@@ -139,7 +146,7 @@ public class FieldCentric extends OpMode {
 
         control.dashboard.sendTelemetryPacket(p);
 
-
+        //hello
         robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
         if (gamepad1.left_bumper) gp1_percent_pwr = 0.25;

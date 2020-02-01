@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,9 +14,10 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="PortTest", group="Iterative Opmode")
+@TeleOp(name="Template", group="Iterative Opmode")
 @Disabled
-public class PortTest extends OpMode {
+@Deprecated
+public class ParkViaOars extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -28,10 +29,13 @@ public class PortTest extends OpMode {
     private DcMotor rightBack;
     private DcMotor horizontal_extender;
     private DcMotor vertical_extender;
-    private DcMotor enc_left;
 
     private Servo collector_arm;
     private Servo foundation_mover;
+    private Servo right_stone_collector;
+    private Servo right_stone_collector_arm;
+    private Servo left_stone_collector;
+    private Servo left_stone_collector_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -55,10 +59,13 @@ public class PortTest extends OpMode {
         rightBack           = hardwareMap.get(DcMotor.class, "right_back");
         horizontal_extender = hardwareMap.get(DcMotor.class, "horizontal_ext");
         vertical_extender   = hardwareMap.get(DcMotor.class, "vertical_ext");
-        enc_left   = hardwareMap.get(DcMotor.class, "enc_left");
 
         collector_arm       = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover    = hardwareMap.get(Servo.class, "Foundation_mover");
+        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
+        right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
+        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
 
         outer_collector     = hardwareMap.get(CRServo.class, "outer_collector");
         inner_collector     = hardwareMap.get(CRServo.class, "inner_collector");
@@ -78,13 +85,10 @@ public class PortTest extends OpMode {
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rowboat = new Robot_Localizer(enc_left,rightFront,rightBack,0.958);
+        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
-
-        collector_arm.setPosition(0.403);
-        foundation_mover.setPosition(0);
     }
 
     /*
@@ -92,6 +96,7 @@ public class PortTest extends OpMode {
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -100,6 +105,8 @@ public class PortTest extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        left_stone_collector_arm.setPosition(0.74);
+        right_stone_collector_arm.setPosition(0.28);
     }
 
     /*

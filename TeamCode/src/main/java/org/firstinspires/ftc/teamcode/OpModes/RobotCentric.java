@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
 @TeleOp(name="Robot-Centric Driving", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class RobotCentric extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
