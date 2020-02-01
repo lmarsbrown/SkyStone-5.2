@@ -30,11 +30,12 @@ public class FieldCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
+    private Servo left_foundation_mover;
+    private Servo right_foundation_mover;
     private Servo right_stone_collector_arm;
     private Servo left_stone_collector_arm;
     private Servo right_stone_collector;
     private Servo left_stone_collector;
-
     private Servo capstone_arm;
 
     private CRServo outer_collector;
@@ -55,34 +56,38 @@ public class FieldCentric extends OpMode {
 
     private Boolean x_down_gp2;
     private Boolean x_down_gp1;
+    private Boolean y_down;
 
     private String capstone_arm_loc;
     private String foundation_mover_loc;
+    private String front_foundation_movers_loc;
 
     @Override
     public void init() {
-        leftFront              = hardwareMap.get(DcMotor.class, "left_front");
-        rightFront             = hardwareMap.get(DcMotor.class, "right_front");
-        leftBack               = hardwareMap.get(DcMotor.class, "left_back");
-        rightBack              = hardwareMap.get(DcMotor.class, "right_back");
-        horizontal_extender    = hardwareMap.get(DcMotor.class, "horizontal_ext");
-        vertical_extender      = hardwareMap.get(DcMotor.class, "vertical_ext");
+        leftFront                 = hardwareMap.get(DcMotor.class, "left_front");
+        rightFront                = hardwareMap.get(DcMotor.class, "right_front");
+        leftBack                  = hardwareMap.get(DcMotor.class, "left_back");
+        rightBack                 = hardwareMap.get(DcMotor.class, "right_back");
+        horizontal_extender       = hardwareMap.get(DcMotor.class, "horizontal_ext");
+        vertical_extender         = hardwareMap.get(DcMotor.class, "vertical_ext");
 
         collector_arm             = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
+        left_foundation_mover     = hardwareMap.get(Servo.class, "front_foundation_left");
+        right_foundation_mover     = hardwareMap.get(Servo.class, "front_foundation_right");
         right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
-        left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
-        right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
-        left_stone_collector = hardwareMap.get(Servo.class, "left_stone_collector");
-        capstone_arm            = hardwareMap.get(Servo.class, "Capstone_Arm");
+        left_stone_collector_arm  = hardwareMap.get(Servo.class, "left_stone_collector_arm");
+        right_stone_collector     = hardwareMap.get(Servo.class, "right_stone_collector");
+        left_stone_collector      = hardwareMap.get(Servo.class, "left_stone_collector");
+        capstone_arm              = hardwareMap.get(Servo.class, "Capstone_Arm");
 
-        outer_collector        = hardwareMap.get(CRServo.class, "outer_collector");
-        inner_collector        = hardwareMap.get(CRServo.class, "inner_collector");
+        outer_collector           = hardwareMap.get(CRServo.class, "outer_collector");
+        inner_collector           = hardwareMap.get(CRServo.class, "inner_collector");
 
-        limit_switch_back      = hardwareMap.get(DigitalChannel.class, "limit_switch1");
-        limit_switch_front     = hardwareMap.get(DigitalChannel.class, "limit_switch2");
+        limit_switch_back         = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        limit_switch_front        = hardwareMap.get(DigitalChannel.class, "limit_switch2");
 
-        positional_offset      = 0;
+        positional_offset         = 0;
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -96,8 +101,8 @@ public class FieldCentric extends OpMode {
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
-        control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
+        rowboat     = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
+        control     = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
         going_to_pt = false;
 
@@ -107,8 +112,12 @@ public class FieldCentric extends OpMode {
 
         x_down_gp1 = Boolean.FALSE;
         x_down_gp2 = Boolean.FALSE;
+        y_down = Boolean.FALSE;
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
+        front_foundation_movers_loc = "up";
+        left_foundation_mover.setPosition(0.72);
+        right_foundation_mover.setPosition(0.26);
         right_stone_collector.setPosition(0.98);
         left_stone_collector.setPosition(0.01);
         try {
@@ -138,7 +147,6 @@ public class FieldCentric extends OpMode {
         p.put("Side",rightFront.getCurrentPosition());
 
         control.dashboard.sendTelemetryPacket(p);
-
 
         robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
@@ -173,6 +181,20 @@ public class FieldCentric extends OpMode {
             x_down_gp1 = Boolean.TRUE;
         } else if(!gamepad1.x && x_down_gp1) {
             x_down_gp1 = Boolean.FALSE;
+        }
+
+        if(gamepad1.y && front_foundation_movers_loc == "up" && !y_down) {
+            left_foundation_mover.setPosition(0.14);
+            right_foundation_mover.setPosition(0.86);
+            front_foundation_movers_loc = "down";
+            y_down = Boolean.TRUE;
+        } else if(gamepad1.y && front_foundation_movers_loc == "down" && !y_down) {
+            left_foundation_mover.setPosition(0.72);
+            right_foundation_mover.setPosition(0.26);
+            front_foundation_movers_loc = "up";
+            y_down = Boolean.TRUE;
+        } else if(!gamepad1.y && y_down) {
+            y_down = Boolean.FALSE;
         }
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {

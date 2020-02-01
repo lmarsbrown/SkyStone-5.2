@@ -27,8 +27,8 @@ public class ServoPositionFinder extends OpMode {
 
     @Override
     public void init() {
-        stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
-        stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
+        stone_collector = hardwareMap.get(Servo.class, "front_foundation_right");
+        stone_collector_arm = hardwareMap.get(Servo.class, "front_foundation_left");
 
         x_down = Boolean.FALSE;
         a_down = Boolean.FALSE;
@@ -39,8 +39,8 @@ public class ServoPositionFinder extends OpMode {
         b_down2 = Boolean.FALSE;
         y_down2 = Boolean.FALSE;
 
-        stone_collector_pos = 0;
-        stone_collector_arm_pos = 0;
+        stone_collector_pos = 0.5;
+        stone_collector_arm_pos = 0.5;
     }
 
     @Override
@@ -111,8 +111,8 @@ public class ServoPositionFinder extends OpMode {
         } else if (!gamepad2.y && y_down2) {
             y_down2 = Boolean.FALSE;
         }
-        telemetry.addData("Left Stone Collector:::::::::::::::::::::::::", stone_collector_pos);
-        telemetry.addData("Left Stone Collector Arm:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::", stone_collector_arm_pos);
+        telemetry.addData("Front-Right Foundation Mover", stone_collector_pos);
+        telemetry.addData("Front-Left Foundation Mover", stone_collector_arm_pos);
         telemetry.update();
     }
 
