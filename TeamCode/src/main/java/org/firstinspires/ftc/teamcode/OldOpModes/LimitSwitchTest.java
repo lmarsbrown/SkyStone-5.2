@@ -26,54 +26,26 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package org.firstinspires.ftc.teamcode.OpModes;
-
+package org.firstinspires.ftc.teamcode.OldOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-@TeleOp(name="Right Stone Arm Ctrl", group="Iterative Opmode")
-//@Disabled
-public class RightStoneArm extends OpMode
-{
-    private Servo right_rear_stone;
-    private Servo right_rear_stone_clamp;
-    private ElapsedTime runtime = new ElapsedTime();
-
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+@TeleOp(name="Limit Switch Test", group="Linear Opmode")
+@Disabled
+@Deprecated
+public class LimitSwitchTest extends LinearOpMode {
+    private DigitalChannel limitswitch;
+    private DigitalChannel otherlimitswitch;
     @Override
-    public void init() {
-        right_rear_stone       = hardwareMap.get(Servo.class, "right_rear_stone");
-        right_rear_stone_clamp = hardwareMap.get(Servo.class, "right_rear_stone_clamp");
-
-        right_rear_stone.setPosition(0);
-        right_rear_stone_clamp.setPosition(0  );
+    public void runOpMode() {
+        limitswitch      = hardwareMap.get(DigitalChannel.class, "limit_switch1");
+        otherlimitswitch = hardwareMap.get(DigitalChannel.class, "limit_switch2");
+        waitForStart();
+        while (opModeIsActive()) {
+            telemetry.addData("LIMIT SWITCH", limitswitch.getState());
+            telemetry.addData("LIMIT SWITCH", otherlimitswitch.getState());
+            telemetry.update();
+        }
     }
-
-    @Override
-    public void init_loop() {
-    }
-
-    @Override
-    public void start() {
-        runtime.reset();
-    }
-
-    @Override
-    public void loop() {
-        if(gamepad1.y) right_rear_stone.setPosition(0);
-        if(gamepad1.b) right_rear_stone.setPosition(0.8);
-
-        if(gamepad1.x) right_rear_stone_clamp.setPosition(0);
-        if(gamepad1.a) right_rear_stone_clamp.setPosition(0.8);
-    }
-
-    @Override
-    public void stop() {
-    }
-
 }

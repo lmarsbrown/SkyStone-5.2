@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -56,6 +56,7 @@ import static java.lang.Math.min;
 
 @TeleOp(name="Movement Control", group="Linear Opmode")
 @Disabled
+@Deprecated
 public class Movement_Control extends LinearOpMode {
 
     // Declare OpMode members.

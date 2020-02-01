@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 @TeleOp(name="Encoder Test", group="Iterative Opmode")
 @Disabled
+@Deprecated
 public class EncoderTest extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

@@ -462,7 +462,7 @@ public class FullRedAuto extends OpMode {
     public void start() {
         int stonePos = 2-pip.stonePos;
         webcam.stopStreaming();
-        getStone(stonePos+3,700,(Object stone)->{
+        getStone(stonePos+3,700,175,(Object stone)->{
             control.gotoPoint(new Transform(2254,770,Math.PI*0.5),true,0.35,0.85,100,(Object alphabet)->{
                 left_stone_collector_arm.setPosition(0.84);
                 left_stone_collector.setPosition(0.01);
@@ -474,7 +474,7 @@ public class FullRedAuto extends OpMode {
                 control.gotoPoint(new Transform(2254,550,Math.PI*0.5),true
                         ,0.25,0.5,80,(Object abbcdea)->{
                             left_stone_collector_arm.setPosition(1);
-                            getStone(stonePos,670,(Object stone1)->{
+                            getStone(stonePos,650,200,(Object stone1)->{
                                 control.gotoPoint(new Transform(2021,760,Math.PI*0.5),true,0.35,1,100,(Object alphabetcdefg)->{
                                     left_stone_collector_arm.setPosition(0.84);
                                     try {
@@ -534,7 +534,7 @@ public class FullRedAuto extends OpMode {
         webcam.stopStreaming();
     }
 
-    private void getStone(int stoneNum,double y, Lambda callback)
+    private void getStone(int stoneNum,double y,double bDist, Lambda callback)
     {
         control.gotoPoint(new Transform(Math.max(350-(200*(stoneNum)),-558),y-150,Math.PI*0.5),true,0.25,0.8,60,-Math.PI*0.5,(Object obj)->{
             left_stone_collector.setPosition(0.43);
@@ -549,7 +549,7 @@ public class FullRedAuto extends OpMode {
                     e.printStackTrace();
                 }
                 left_stone_collector_arm.setPosition(1);
-                control.gotoPoint(new Transform(350-(200*(stoneNum)),y-150,Math.PI*0.5),true,0.35,0.5,80,(Object abbcdea)->{
+                control.gotoPoint(new Transform(350-(200*(stoneNum)),y-bDist,Math.PI*0.5),true,0.35,0.5,80,(Object abbcdea)->{
                     callback.call(stoneNum);
                     return 0;
                 });

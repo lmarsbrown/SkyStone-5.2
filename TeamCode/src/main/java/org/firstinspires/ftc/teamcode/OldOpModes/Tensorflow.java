@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import android.os.Build;
 
@@ -29,6 +29,7 @@ import java.util.List;
 
 @TeleOp(name="tesorflow", group="Iterative Opmode")
 @Disabled
+@Deprecated
 public class Tensorflow extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

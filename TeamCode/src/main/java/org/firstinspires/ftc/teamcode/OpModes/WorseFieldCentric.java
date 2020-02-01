@@ -125,6 +125,13 @@ public class WorseFieldCentric extends OpMode {
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
         capstone_arm_loc = "up";
+        right_stone_collector_arm.setPosition(0.1);
+        left_stone_collector_arm.setPosition(0.9);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         right_stone_collector.setPosition(0.98);
         left_stone_collector.setPosition(0.01);
         try {

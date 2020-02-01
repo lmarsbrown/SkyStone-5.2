@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 @Autonomous(name="Foundation", group="Iterative Opmode")
 @Disabled
+@Deprecated
 public class Foundation extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

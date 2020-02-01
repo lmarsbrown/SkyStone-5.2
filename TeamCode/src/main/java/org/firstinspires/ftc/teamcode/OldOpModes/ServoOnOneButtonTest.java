@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,9 +14,10 @@ import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@Autonomous(name="YForward", group="Iterative Opmode")
+@TeleOp(name="Servo On 1 Btn Test", group="Iterative Opmode")
 @Disabled
-public class YForward extends OpMode {
+@Deprecated
+public class ServoOnOneButtonTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -46,6 +46,10 @@ public class YForward extends OpMode {
 
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
+
+    private String foundation_mover_loc;
+
+    private Boolean a_down;
 
     @Override
     public void init() {
@@ -82,8 +86,14 @@ public class YForward extends OpMode {
 
         going_to_pt = false;
 
-        collector_arm.setPosition(0.403);
-        foundation_mover.setPosition(0);
+
+        //Move collector_arm up
+        collector_arm.setPosition(0.77);
+
+        foundation_mover.setPosition(0.05);
+        foundation_mover_loc = "up";
+
+        a_down = Boolean.FALSE;
     }
 
     /*
@@ -107,14 +117,17 @@ public class YForward extends OpMode {
      */
     @Override
     public void loop() {
-        if(limit_switch_back.getState())horizontal_extender.setPower(0.4);
-        else horizontal_extender.setPower(0);
-        rowboat.relocalize();
-
-        telemetry.addData("x",rowboat.pos.x);
-        telemetry.addData("y",rowboat.pos.y);
-        telemetry.addData("r",rowboat.pos.r);
-        telemetry.update();
+        if(gamepad1.a && foundation_mover_loc == "up" && !a_down) {
+            foundation_mover.setPosition(0.57);
+            foundation_mover_loc = "down";
+            a_down = Boolean.TRUE;
+        } else if(gamepad1.a && foundation_mover_loc == "down" && !a_down) {
+            foundation_mover.setPosition(0.05);
+            foundation_mover_loc = "up";
+            a_down = Boolean.TRUE;
+        } else if(!gamepad1.a && a_down) {
+            a_down = Boolean.FALSE;
+        }
     }
 
     /*

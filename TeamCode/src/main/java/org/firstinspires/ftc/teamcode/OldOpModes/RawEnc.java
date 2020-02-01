@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +16,8 @@ import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 @TeleOp(name="Template", group="Iterative Opmode")
 @Disabled
-public class Template extends OpMode {
+@Deprecated
+public class RawEnc extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -32,10 +32,6 @@ public class Template extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
-    private Servo right_stone_collector;
-    private Servo right_stone_collector_arm;
-    private Servo left_stone_collector;
-    private Servo left_stone_collector_arm;
 
     private CRServo outer_collector;
     private CRServo inner_collector;
@@ -121,6 +117,10 @@ public class Template extends OpMode {
     @Override
     public void loop() {
         rowboat.relocalize();
+
+        telemetry.addData("enc1", vertical_extender.getCurrentPosition());
+        telemetry.addData("enc2", rightFront.getCurrentPosition());
+        telemetry.addData("enc3", rightBack.getCurrentPosition());
 
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);

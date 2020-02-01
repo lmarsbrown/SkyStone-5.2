@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OldOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,16 +10,15 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot.MotorController;
-import org.firstinspires.ftc.teamcode.Robot.PIDController;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Controller;
 import org.firstinspires.ftc.teamcode.Robot.Robot_Localizer;
 import org.firstinspires.ftc.teamcode.Utils.Transform;
 
 
-@TeleOp(name="Encoder Motor Test", group="Iterative Opmode")
-//@Disabled
-public class EncoderMotorTest extends OpMode {
+@Autonomous(name="YForward", group="Iterative Opmode")
+@Disabled
+@Deprecated
+public class YForward extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private Robot_Localizer rowboat;
@@ -46,9 +47,6 @@ public class EncoderMotorTest extends OpMode {
 
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
-    private MotorController vertCont;
-
-    private int start = 0;
 
     @Override
     public void init() {
@@ -75,22 +73,18 @@ public class EncoderMotorTest extends OpMode {
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         vertical_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontal_extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        vertical_extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vertical_extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         rowboat = new Robot_Localizer(leftBack,rightFront,rightBack,0.958);
         control = new Robot_Controller(rightFront,leftFront,rightBack,leftBack,rowboat);
 
-        vertCont = new MotorController(vertical_extender,new PIDController(0.0051,0.001,0.00423,0));
-
         going_to_pt = false;
 
+        collector_arm.setPosition(0.403);
+        foundation_mover.setPosition(0);
     }
 
     /*
@@ -98,6 +92,7 @@ public class EncoderMotorTest extends OpMode {
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -105,12 +100,6 @@ public class EncoderMotorTest extends OpMode {
      */
     @Override
     public void start() {
-        start = vertical_extender.getCurrentPosition();
-        vertCont.setTarget(-1302,true);
-        /*
-        vertical_extender.setTargetPosition(1302);
-
-        vertical_extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
         runtime.reset();
     }
 
@@ -119,9 +108,10 @@ public class EncoderMotorTest extends OpMode {
      */
     @Override
     public void loop() {
+        if(limit_switch_back.getState())horizontal_extender.setPower(0.4);
+        else horizontal_extender.setPower(0);
         rowboat.relocalize();
-        vertCont.updateController();
-        telemetry.addData("ENCODER", vertical_extender.getCurrentPosition());
+
         telemetry.addData("x",rowboat.pos.x);
         telemetry.addData("y",rowboat.pos.y);
         telemetry.addData("r",rowboat.pos.r);
