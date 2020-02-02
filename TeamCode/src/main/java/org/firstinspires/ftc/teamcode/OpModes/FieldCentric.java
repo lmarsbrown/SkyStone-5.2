@@ -166,7 +166,7 @@ public class FieldCentric extends OpMode {
         else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.4;
         else gp2_percent_pwr = 1;
 
-        if (gamepad1.y) {
+        /*if (gamepad1.y) {
             saved_robot_pos = rowboat.pos.clone();
             saved_robot_pos.r = (saved_robot_pos.r % (2 * Math.PI)) % -(2 * Math.PI);
         }
@@ -177,7 +177,7 @@ public class FieldCentric extends OpMode {
                 going_to_pt = false;
                 return 0;
             });
-        }
+        }*/
 
         if(gamepad1.x && foundation_mover_loc == "up" && !x_down_gp1) {
             foundation_mover.setPosition(0.57);
@@ -205,10 +205,10 @@ public class FieldCentric extends OpMode {
             y_down = Boolean.FALSE;
         }
 
-        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
+        /*if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
             control.clearGoto();
-        }
+        }*/
 
         robot_vector.rotate(new Transform(0, 0, 0), positional_offset - rowboat.pos.r);
 
