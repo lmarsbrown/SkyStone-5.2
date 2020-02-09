@@ -205,10 +205,10 @@ public class FieldCentric extends OpMode {
             y_down = Boolean.FALSE;
         }
 
-        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
+        /*if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             going_to_pt = false;
             control.clearGoto();
-        }
+        }*/
 
         robot_vector.rotate(new Transform(0, 0, 0), positional_offset - rowboat.pos.r);
 
