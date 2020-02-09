@@ -40,6 +40,8 @@ public class WorseFieldCentric extends OpMode {
 
     private Servo collector_arm;
     private Servo foundation_mover;
+    private Servo left_foundation_mover;
+    private Servo right_foundation_mover;
     private Servo right_stone_collector_arm;
     private Servo left_stone_collector_arm;
     private Servo right_stone_collector;
@@ -61,15 +63,15 @@ public class WorseFieldCentric extends OpMode {
     private DigitalChannel limit_switch_front;
     private DigitalChannel limit_switch_back;
 
-    private Boolean x_down;
+    private double positional_offset;
 
     private Boolean x_down_gp2;
     private Boolean x_down_gp1;
+    private Boolean y_down;
 
     private String capstone_arm_loc;
     private String foundation_mover_loc;
-
-    private double positional_offset;
+    private String front_foundation_movers_loc;
 
     BNO055IMU imu;
 
@@ -87,6 +89,8 @@ public class WorseFieldCentric extends OpMode {
 
         collector_arm             = hardwareMap.get(Servo.class, "collector_arm");
         foundation_mover          = hardwareMap.get(Servo.class, "Foundation_mover");
+        left_foundation_mover     = hardwareMap.get(Servo.class, "front_foundation_left");
+        right_foundation_mover     = hardwareMap.get(Servo.class, "front_foundation_right");
         right_stone_collector_arm = hardwareMap.get(Servo.class, "right_stone_collector_arm");
         left_stone_collector_arm = hardwareMap.get(Servo.class, "left_stone_collector_arm");
         right_stone_collector = hardwareMap.get(Servo.class, "right_stone_collector");
@@ -122,9 +126,12 @@ public class WorseFieldCentric extends OpMode {
 
         x_down_gp1 = Boolean.FALSE;
         x_down_gp2 = Boolean.FALSE;
+        y_down = Boolean.FALSE;
         capstone_arm_loc = "up";
         foundation_mover_loc = "up";
-        capstone_arm_loc = "up";
+        front_foundation_movers_loc = "up";
+        left_foundation_mover.setPosition(0.72);
+        right_foundation_mover.setPosition(0.26);
         right_stone_collector_arm.setPosition(0.1);
         left_stone_collector_arm.setPosition(0.9);
         try {
@@ -171,6 +178,13 @@ public class WorseFieldCentric extends OpMode {
     public void loop() {
         Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         rowboat.relocalize();
+        TelemetryPacket p = new TelemetryPacket();
+        p.put("Left",leftBack.getCurrentPosition());
+        p.put("Right",rightBack.getCurrentPosition());
+        p.put("Side",rightFront.getCurrentPosition());
+
+        control.dashboard.sendTelemetryPacket(p);
+
         robot_vector = new Transform(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         robot_vector.rotate(new Transform(0, 0, 0), imuAngles.firstAngle-positional_offset);
 
@@ -182,7 +196,7 @@ public class WorseFieldCentric extends OpMode {
         else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.4;
         else gp2_percent_pwr = 1;
 
-        if (gamepad1.y) {
+        /*if (gamepad1.y) {
             saved_robot_pos = rowboat.pos.clone();
             saved_robot_pos.r = (saved_robot_pos.r % (2 * Math.PI)) % -(2 * Math.PI);
         }
@@ -193,7 +207,7 @@ public class WorseFieldCentric extends OpMode {
                 going_to_pt = false;
                 return 0;
             });
-        }
+        }*/
 
         if(gamepad1.x && foundation_mover_loc == "up" && !x_down_gp1) {
             foundation_mover.setPosition(0.57);
@@ -205,6 +219,20 @@ public class WorseFieldCentric extends OpMode {
             x_down_gp1 = Boolean.TRUE;
         } else if(!gamepad1.x && x_down_gp1) {
             x_down_gp1 = Boolean.FALSE;
+        }
+
+        if(gamepad1.y && front_foundation_movers_loc == "up" && !y_down) {
+            left_foundation_mover.setPosition(0.14);
+            right_foundation_mover.setPosition(0.86);
+            front_foundation_movers_loc = "down";
+            y_down = Boolean.TRUE;
+        } else if(gamepad1.y && front_foundation_movers_loc == "down" && !y_down) {
+            left_foundation_mover.setPosition(0.73);
+            right_foundation_mover.setPosition(0.25);
+            front_foundation_movers_loc = "up";
+            y_down = Boolean.TRUE;
+        } else if(!gamepad1.y && y_down) {
+            y_down = Boolean.FALSE;
         }
 
         if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
@@ -247,12 +275,18 @@ public class WorseFieldCentric extends OpMode {
             x_down_gp2 = Boolean.FALSE;
         }
 
+        if(gamepad1.left_trigger > 0.9) {
+            left_foundation_mover.setPosition(0.27);
+            right_foundation_mover.setPosition(0.73);
+        }
+
         if(gamepad1.right_trigger > 0.9) {
             positional_offset = imuAngles.firstAngle;
         }
 
         telemetry.addData("X Position", rowboat.pos.x);
         telemetry.addData("Y Position", rowboat.pos.y);
+        telemetry.addData("Rotation", rowboat.pos.r);
 
         if(saved_robot_pos != null)
         {
@@ -264,10 +298,10 @@ public class WorseFieldCentric extends OpMode {
         }
         telemetry.addData("Z Lift Encoder", vertical_extender.getCurrentPosition());
         telemetry.update();
-        TelemetryPacket p = new TelemetryPacket();
-        p.put("Rotation 1",imuAngles.firstAngle);
-        p.put("Rotation 2",imuAngles.secondAngle);
-        p.put("Rotation 3",imuAngles.thirdAngle);
+        TelemetryPacket p2 = new TelemetryPacket();
+        p2.put("Rotation 1",imuAngles.firstAngle);
+        p2.put("Rotation 2",imuAngles.secondAngle);
+        p2.put("Rotation 3",imuAngles.thirdAngle);
         control.dashboard.sendTelemetryPacket(p);
     }
 

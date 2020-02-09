@@ -166,7 +166,7 @@ public class FieldCentric extends OpMode {
         else if (gamepad2.right_trigger > 0.8) gp2_percent_pwr = 0.4;
         else gp2_percent_pwr = 1;
 
-        if (gamepad1.y) {
+        /*if (gamepad1.y) {
             saved_robot_pos = rowboat.pos.clone();
             saved_robot_pos.r = (saved_robot_pos.r % (2 * Math.PI)) % -(2 * Math.PI);
         }
@@ -177,7 +177,7 @@ public class FieldCentric extends OpMode {
                 going_to_pt = false;
                 return 0;
             });
-        }
+        }*/
 
         if(gamepad1.x && foundation_mover_loc == "up" && !x_down_gp1) {
             foundation_mover.setPosition(0.57);
@@ -197,8 +197,8 @@ public class FieldCentric extends OpMode {
             front_foundation_movers_loc = "down";
             y_down = Boolean.TRUE;
         } else if(gamepad1.y && front_foundation_movers_loc == "down" && !y_down) {
-            left_foundation_mover.setPosition(0.72);
-            right_foundation_mover.setPosition(0.26);
+            left_foundation_mover.setPosition(0.73);
+            right_foundation_mover.setPosition(0.25);
             front_foundation_movers_loc = "up";
             y_down = Boolean.TRUE;
         } else if(!gamepad1.y && y_down) {
@@ -245,6 +245,11 @@ public class FieldCentric extends OpMode {
             x_down_gp2 = Boolean.TRUE;
         } else if(!gamepad2.x && x_down_gp2) {
             x_down_gp2 = Boolean.FALSE;
+        }
+
+        if(gamepad1.left_trigger > 0.9) {
+            left_foundation_mover.setPosition(0.27);
+            right_foundation_mover.setPosition(0.73);
         }
 
         if(gamepad1.right_trigger > 0.9) {
